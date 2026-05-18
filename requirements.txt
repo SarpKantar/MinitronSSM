@@ -1,0 +1,27 @@
+# Core
+torch>=2.3
+transformers>=4.44
+accelerate>=0.33
+datasets>=2.20
+tokenizers>=0.19
+safetensors>=0.4
+
+# Config / utilities
+pyyaml>=6.0
+pydantic>=2.7
+tqdm>=4.66
+numpy>=1.26
+
+# Evaluation
+lm-eval>=0.4.4
+
+# Dev / test
+pytest>=8.2
+
+# NOTE:
+# `mamba-ssm` and `causal-conv1d` are required at runtime on the GPU cluster
+# for Nemotron-H forward/backward passes. They depend on a matching CUDA
+# toolchain and are NOT installable on macOS / CPU-only dev boxes. Install
+# them inside the A100 environment (conda env `minitron`), not on macOS / CPU-only:
+#
+#   pip install mamba-ssm==2.* causal-conv1d>=1.4

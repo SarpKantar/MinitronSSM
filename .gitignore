@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Project artifacts
+outputs/scores/*
+outputs/candidates/*
+outputs/checkpoints/*
+outputs/eval/*
+!outputs/**/.gitkeep
+
+# Logs / caches
+*.log
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# HF / torch caches when symlinked into the repo
+hf_cache/
+torch_cache/

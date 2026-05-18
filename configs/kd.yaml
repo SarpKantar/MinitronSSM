@@ -1,0 +1,37 @@
+# Knowledge-distillation hyperparameters.
+# Reference: plan section 9.
+
+objective:
+  temperature: 1.0          # T in [1.0, 2.0]; plan recommends 1.0 or 2.0
+  alpha: 0.9                # weight on KD term; (1 - alpha) on CE
+  top_k: 100                # 0 -> full-vocab KL; > 0 -> top-k teacher logits
+
+budget:
+  top_candidates: 3
+  tokens_per_candidate: 200_000_000
+  smoke_test_tokens: 10_000_000
+
+training:
+  seq_len: 8192             # fallback to 4096 if memory is tight
+  global_batch_size: 768    # paper value; reduce locally
+  micro_batch_size: 1
+  grad_accumulation: "auto" # derived from global / micro / num_gpus
+  activation_checkpointing: true
+
+optimizer:
+  name: "adamw"
+  lr: 5.0e-5
+  weight_decay: 0.01
+  betas: [0.9, 0.95]
+
+scheduler:
+  name: "cosine"
+  warmup_steps: 60
+  warmup_ratio: null
+  min_lr_ratio: 0.1
+
+# Pick one of: "online", "cache", "hybrid". Plan section 9.3.
+mode: "online"
+cache:
+  path: "outputs/scores/teacher_topk.bin"
+  dtype: "bf16"

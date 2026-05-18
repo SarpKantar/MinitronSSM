@@ -1,0 +1,22 @@
+# Importance-estimation (calibration) setup.
+# Reference: plan section 6.
+
+calibration:
+  num_samples: 1024
+  seq_len: 8192             # falls back to 4096 if memory is tight
+  batch_size: 1
+  precision: "bf16"
+
+# Activation aggregation. "abs_mean" matches Minitron-style aggregation.
+aggregation:
+  reduce_seq: "mean"        # mean over sequence length
+  reduce_batch: "l2"        # L2 over batch / samples (alt: "abs_mean")
+
+# Mamba-specific scoring source (paper Table 2 -> Wx).
+mamba:
+  score_source: "Wx"        # one of: Wx, Wz, WO
+  preserve_group_structure: true
+  head_channel_ranking: "shared"   # one channel ranking applied to every head
+
+# Output artifact written by scripts/02_importance.py.
+output_path: "outputs/scores/importance_scores.pt"

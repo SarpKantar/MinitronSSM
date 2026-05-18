@@ -1,0 +1,46 @@
+Q1: Reference to the paper
+
+Title: Minitron-SSM: Efficient Hybrid Language Model Compression through Group-Aware SSM Pruning
+Authors: Ali Taghibakhshi, Sharath Turuvekere Sreenivas, Saurav Muralidharan, Marcin Chochowski, Yashaswi Karnati, Raviraj Joshi, Ameya Sunil Mahabaleshwarkar, Zijia Chen, Yoshi Suhara, Oluwatobi Olabiyi, Daniel Korzekwa, Mostofa Patwary, Mohammad Shoeybi, Jan Kautz, Bryan Catanzaro, Ashwath Aithal, Nima Tajbakhsh, Pavlo Molchanov
+Venue / Year: Published at 39th Conference on Neural Information Processing Systems (NeurIPS 2025)
+Link: https://arxiv.org/abs/2504.11409
+
+ 
+
+Q2: What I will reproduce
+
+My selected reproduction target is a reduced version of the architecture search pipeline behind Table 1, followed by a limited partial reproduction of Table 4 using only internal comparisons between my own models.
+
+In short, the aim of the paper is to provide a structured way of pruning hybrid architectures, namely Attention/Transformer + SSM layers, while preserving SSM block structure. They indicate that pruning Transformer-only models is relatively more straightforward compared to pruning Mamba layers, which are SSM-based modules. The main difficulty comes from the internal organization of Mamba layers. Unlike standard Transformer components, Mamba heads cannot always be freely reordered or removed, because they are tied to group-wise SSM computations.
+
+The paper does not only prune Mamba components. It combines several pruning axes, including Mamba heads, Mamba head channels, FFN dimensions, embedding dimensions, and model depth. After pruning, the smaller model is recovered through knowledge distillation using the original larger model as the teacher model.
+
+Since there are many possible modules to prune, the paper performs a large architecture search to decide which combination of pruning choices gives the best accuracy-throughput trade-off. In the original setup, they generate more than 120 candidate architectures under the 4B parameter budget. For our reproduction, I propose to keep the same logic but reduce the scale. Instead of generating more than 120 candidates, I can generate around 20 candidate architectures. I can still use the same pruning axes described in the paper, but I should focus mostly on width pruning, since the paper shows that depth pruning hurts accuracy more severely. Then, instead of selecting the top 22 candidates, I can select only the top 3 candidates based on zero-shot validation loss.
+
+In the second step of the paper, the selected top-22 candidates are trained with lightweight knowledge distillation using 3.8B tokens each. This means the original lightweight KD search uses approximately:
+
+22 x 3.8B = 83.6B KD tokens
+
+This is already too expensive for our setting, especially because KD requires both the student model and the original larger teacher model to run. With only 2–4 A100 GPUs and 1 month, reproducing this full top-22 KD stage would not be realistic. Therefore, I would reduce this stage to top-3 candidates and use a much smaller KD budget, for example around 200M tokens per candidate. This gives:
+
+3 x 200M = 600M KD tokens
+
+This is much smaller than the paper’s 83.6B-token lightweight KD search, but it still allows us to test the key idea: whether the architectures selected by zero-shot validation loss remain strong after a short KD recovery stage.
+
+The final KD stage in the paper is even more expensive. After selecting the best candidate, the authors train the final compressed model with approximately 380B tokens. This is far beyond my available resources. Therefore, I cannot reproduce the final 380B-token KD training. If time remains, I may run a much smaller final KD stage on the selected candidate to check whether the evaluation metrics improve in the expected direction.
+
+After a final model is obtained, running benchmarks is relatively less expensive than training. However, reproducing the final benchmark tables would only be meaningful if I had a model trained with a comparable KD budget. Since I will not perform the 380B-token final KD stage, I should not target the final benchmark tables as the main reproduction result. However, it would still be sensible to report a limited set of evaluation results, such as LM validation loss and relative throughput, to verify whether the reduced reproduction follows the same trend as the paper: recovering accuracy after KD while improving inference efficiency through pruning.
+
+For Table 4, I can choose a few base-model benchmarks and compare only my own models internally, for example parent model vs. pruned model vs. reduced-KD model. I will not rerun external community models.
+
+ 
+
+Q3: Justification for my choice
+
+I choose this target because it is the most central and realistic part of the paper to reproduce under limited compute. Table 1 is important because it represents the architecture selection stage: the paper searches over different pruning combinations and selects the compressed model candidate based on LM validation loss and relative throughput. Reproducing this process at a reduced scale still tests the main idea of the paper, without requiring the full 380B-token final KD training.
+
+I would not reproduce most of the ablation studies. Table 2 is an ablation table for choosing the Mamba scoring source: Wx, Wz, or WO. It is useful for justifying Wx-based scoring, but not worth reproducing. Table 3 compares L2 vs. FLAP pruning metrics. Since FLAP does not clearly improve results, I can skip this table.
+
+Table 4 can be partially reproduced in a limited way. I can choose a few base-model benchmarks and compare only my own models internally, for example parent model vs. pruned model vs. reduced-KD model. This would help show whether the reduced pruning and KD pipeline works in the expected direction.
+
+Table 5 should not be reproduced. It is about instruction-tuned LLMs, which is far from the main architecture-search and compression story. Table 6 is not suitable because it evaluates long-context performance up to 128k tokens, and the paper uses a separate long-context extension stage. Table 7 is not a good target because although it is small, it requires a separate safety evaluation setup with Garak and AEGIS, and it is less central to the main compression method. Table 8 is also not suitable because it is a separate Mamba2 generalization experiment and requires training a compressed 780M model on 10.5B tokens, which is outside our main Nemotron-H reproduction plan.

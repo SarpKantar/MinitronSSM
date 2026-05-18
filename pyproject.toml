@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "minitron-ssm"
+version = "0.0.1"
+description = "Scaled reproduction of Minitron-SSM (NVIDIA, NeurIPS 2025)."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Sarp Kantar" }]
+license = { text = "MIT" }
+dependencies = [
+    "torch>=2.3",
+    "transformers>=4.44",
+    "accelerate>=0.33",
+    "datasets>=2.20",
+    "pyyaml>=6.0",
+    "pydantic>=2.7",
+    "tqdm>=4.66",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+eval = ["lm-eval>=0.4.4"]
+dev = ["pytest>=8.2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"

@@ -1,0 +1,35 @@
+# Candidate architecture search space.
+# Reference: plan section 8.2.
+
+target_param_budget: 4_000_000_000   # ~4B params
+budget_tolerance: 0.05               # accept candidates within +/- 5%
+
+max_candidates: 20                   # plan reduces ~125 -> ~20
+
+# Anchor candidates from Table 1 of the paper (always included).
+anchors:
+  - id: "anchor-1"
+    layers: 52
+    embedding: 3072
+    ffn: 12288
+    mamba_heads: 112
+    mamba_head_channels: 64
+  - id: "anchor-2"
+    layers: 52
+    embedding: 3072
+    ffn: 10752
+    mamba_heads: 128
+    mamba_head_channels: 64
+
+# Grids for enumeration. Width-only by default (plan section 8.1).
+grids:
+  layers: [52]
+  embedding: [3072, 3328, 3584]
+  ffn: [9984, 10752, 11520, 12288, 13056, 13824, 14592]
+  mamba_heads: [96, 104, 112, 120, 128]
+  mamba_head_channels: [48, 56, 60, 62, 64]
+
+# Optional depth-pruning ablation (Ablation A, plan section 12).
+depth_ablation:
+  enabled: false
+  layers_options: [44, 48]

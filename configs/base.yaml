@@ -1,0 +1,40 @@
+# Global defaults shared by every stage.
+# References: minitron_ssm_reproduction_plan.md sections 2, 5, 14.
+
+run_name: "minitron-ssm-scaled"
+seed: 1234
+
+paths:
+  outputs_dir: "outputs"
+  scores_dir: "outputs/scores"
+  candidates_dir: "outputs/candidates"
+  checkpoints_dir: "outputs/checkpoints"
+  eval_dir: "outputs/eval"
+  hf_cache: null            # null -> use HF default; set to a path on the cluster
+
+hardware:
+  device: "cuda"
+  num_gpus: 4               # target: 2-4 A100 80GB
+  precision: "bf16"
+
+# Public parent / teacher model. The 4B model is reference-only.
+models:
+  parent: "nvidia/Nemotron-H-8B-Base-8K"
+  reference_4b: "nvidia/Nemotron-H-4B-Base-8K"
+
+# Parent architecture (anchors used by search/param_count.py).
+# Source: plan section 8.2 (Table 1 parent row).
+parent_arch:
+  layers: 52
+  embedding: 4096
+  ffn: 21504
+  mamba_heads: 128
+  mamba_head_channels: 64
+  mamba_groups: 8           # Nemotron-H uses 8 SSM groups; verify when loading
+  attention_layers: 4       # paper: 4 attention layers; not pruned
+  vocab_size: 131072        # Nemotron-H vocab size, verify on load
+
+# Standard sequence-length policy.
+seq_len:
+  preferred: 8192
+  fallback: 4096

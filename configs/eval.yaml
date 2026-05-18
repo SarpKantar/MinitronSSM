@@ -1,0 +1,30 @@
+# Evaluation setup.
+# Reference: plan section 11.
+
+lm_loss:
+  seq_len: 8192
+  num_tokens: 20_000_000
+
+throughput:
+  input_lens: [4096, 8192]
+  output_lens: [256, 512]
+  batch_sizes: [1, 2, 4]
+  warmup_iters: 3
+  measure_iters: 10
+
+# Reduced Table 4 task list. Optional tasks are appended only if time allows.
+lm_eval_harness:
+  tasks:
+    - arc_challenge
+    - arc_easy
+    - hellaswag
+    - piqa
+    - winogrande
+    - openbookqa
+    - mmlu
+  optional_tasks:
+    - gsm8k
+    - humaneval
+    - mbpp
+  num_fewshot: 0
+  batch_size: "auto"

@@ -1,0 +1,30 @@
+# Public-data substitute for the NVIDIA Phase-3 mixture.
+# Reference: plan section 4.
+
+mixture:
+  - name: "fineweb"
+    hf_path: "HuggingFaceFW/fineweb"
+    hf_subset: "sample-10BT"
+    weight: 0.60
+  - name: "starcoder"
+    hf_path: "bigcode/starcoderdata"
+    hf_subset: null
+    weight: 0.20
+  - name: "open-web-math"
+    hf_path: "open-web-math/open-web-math"
+    hf_subset: null
+    weight: 0.10
+  - name: "oasst1"
+    hf_path: "OpenAssistant/oasst1"
+    hf_subset: null
+    weight: 0.10
+
+# Held-out validation set used by every LM-loss measurement.
+validation:
+  hf_path: "HuggingFaceFW/fineweb"
+  hf_subset: "sample-10BT"
+  num_tokens: 20_000_000    # 10M-50M, plan section 4
+  seed: 17
+
+streaming: true
+shuffle_buffer: 10_000
