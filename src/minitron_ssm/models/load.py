@@ -53,6 +53,25 @@ def _assert_parent_arch_compat(model: Any, base_cfg: BaseConfig) -> None:
             raise ValueError(f"Model/config mismatch for {key}: got {got}, expected {val}")
 
 
+def disable_fast_mamba_kernels(model: Any) -> int:
+    """Force Nemotron-H Mamba blocks onto the safe torch path.
+
+    The installed ``mamba_ssm`` / ``causal-conv1d`` stack can execute
+    inference successfully but fail in the fused training kernel
+    ``mamba_split_conv1d_scan_combined`` with
+    ``TypeError: causal_conv1d_fwd(): incompatible function arguments``.
+    Repointing ``cuda_kernels_forward`` to the model's own
+    ``torch_forward`` keeps the code on GPU while bypassing the broken
+    fused path.
+    """
+    patched = 0
+    for module in model.modules():
+        if hasattr(module, "cuda_kernels_forward") and hasattr(module, "torch_forward"):
+            module.cuda_kernels_forward = module.torch_forward
+            patched += 1
+    return patched
+
+
 def load_parent(
     base_cfg: BaseConfig,
     *,
@@ -104,6 +123,58 @@ def load_parent(
 
     _assert_parent_arch_compat(model, base_cfg)
     return model, tokenizer
+
+
+def build_pruned_model(
+    parent: Any,
+    cand_cfg: "dict[str, Any]",
+    *,
+    eval_mode: bool = True,
+) -> Any:
+    """Instantiate a pruned model shell whose architecture matches *cand_cfg*.
+
+    Instead of deepcopying the parent (which would duplicate 16 GB on GPU),
+    we copy the parent's HuggingFace config, override the pruned dimensions,
+    build a fresh (randomly initialised) model from that config, and return
+    it ready for ``load_state_dict``.
+
+    Mapping between :class:`~minitron_ssm.search.space.Candidate` fields and
+    Nemotron-H HuggingFace config attributes::
+
+        embedding  → hidden_size
+        ffn        → intermediate_size
+        layers     → num_hidden_layers
+    """
+    import copy as _copy
+
+    import torch
+    from transformers import AutoModelForCausalLM
+
+    pruned_config = _copy.deepcopy(parent.config)
+
+    # NOTE: Mamba head/channel/group dims are intentionally NOT overridden here.
+    # The stage-04 pruning silently no-op'd on those dimensions (prune_mamba_heads
+    # was called on the NemotronHBlock rather than its .mixer, so _get_int_attr
+    # returned 0 and the early-return guard fired). The saved checkpoints therefore
+    # retain the original Mamba tensor shapes (num_heads=128, head_dim=64). Only
+    # override dims that were actually pruned so the model shell matches the ckpt.
+    overrides: dict[str, tuple[str, ...]] = {
+        "embedding": ("hidden_size",),
+        "ffn": ("intermediate_size",),
+        "layers": ("num_hidden_layers",),
+    }
+    for cand_key, cfg_attrs in overrides.items():
+        if cand_key not in cand_cfg:
+            continue
+        for cfg_attr in cfg_attrs:
+            if hasattr(pruned_config, cfg_attr):
+                setattr(pruned_config, cfg_attr, cand_cfg[cand_key])
+
+    model = AutoModelForCausalLM.from_config(pruned_config, trust_remote_code=True)
+    model = model.to(dtype=parent.dtype if hasattr(parent, "dtype") else torch.bfloat16)
+    if eval_mode:
+        model.eval()
+    return model
 
 
 def load_reference_4b(base_cfg: BaseConfig) -> Tuple[Any, Any]:

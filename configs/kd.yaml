@@ -8,11 +8,17 @@ objective:
 
 budget:
   top_candidates: 3
-  tokens_per_candidate: 200_000_000
-  smoke_test_tokens: 10_000_000
+  tokens_per_candidate: 20_000_000   # reduced from 200M → ~7h per candidate on A100
+  smoke_test_tokens: 2_000_000       # reduced from 10M → ~1h sanity check
 
 training:
-  seq_len: 8192             # fallback to 4096 if memory is tight
+  # NOTE: the student runs the Mamba `torch_forward` fallback (fused kernels are
+  # disabled to dodge the causal_conv1d_fwd TypeError). That naive SSD path
+  # materialises a fp32 tensor of shape (b, c, l, s, h, n) costing (seq_len/128) GiB
+  # for one chunk -> 64 GiB at seq_len=8192, which OOMs a single 80GB A100 once the
+  # teacher (~17 GB) + student (~10 GB) + grads + AdamW moments are also resident.
+  # 2048 keeps that transient tensor at 16 GiB, leaving headroom for the optimizer.
+  seq_len: 2048             # was 8192; reduced for torch_forward memory footprint
   global_batch_size: 768    # paper value; reduce locally
   micro_batch_size: 1
   grad_accumulation: "auto" # derived from global / micro / num_gpus

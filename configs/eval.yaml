@@ -3,14 +3,16 @@
 
 lm_loss:
   seq_len: 8192
-  num_tokens: 20_000_000
+  # 1M tokens keeps per-candidate eval ~12 min on A100, fitting 20 candidates
+  # inside the 12h overnight window. Raise back to 20_000_000 for final eval.
+  num_tokens: 1_000_000
 
 throughput:
-  input_lens: [4096, 8192]
-  output_lens: [256, 512]
-  batch_sizes: [1, 2, 4]
-  warmup_iters: 3
-  measure_iters: 10
+  input_lens: [4096]
+  output_lens: [256]
+  batch_sizes: [1, 4]
+  warmup_iters: 2
+  measure_iters: 5
 
 # Reduced Table 4 task list. Optional tasks are appended only if time allows.
 lm_eval_harness:

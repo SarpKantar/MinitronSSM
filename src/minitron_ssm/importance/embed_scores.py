@@ -20,7 +20,31 @@ def score_hidden_channels(activations: Dict[str, Any]) -> Any:
     import torch
 
     vectors = []
-    for _k, val in activations.items():
+    # Prefer hidden-state-like activations and avoid expansion/intermediate paths.
+    include_tokens = ("norm", "ln", "embed", "resid", "hidden", "down_proj", "out_proj")
+    exclude_tokens = (
+        "up_proj",
+        "gate_up",
+        "gate_proj",
+        "fc1",
+        "intermediate",
+        "in_proj",
+        "x_proj",
+        "conv",
+    )
+
+    filtered: list[tuple[str, Any]] = []
+    for k, v in activations.items():
+        lk = k.lower()
+        if any(tok in lk for tok in exclude_tokens):
+            continue
+        if any(tok in lk for tok in include_tokens):
+            filtered.append((k, v))
+
+    # Fallback: if filtering removes everything, keep original behavior.
+    source = filtered if filtered else list(activations.items())
+
+    for _k, val in source:
         t = torch.as_tensor(val, dtype=torch.float32)
         if t.ndim > 1:
             t = t.abs().mean(dim=tuple(range(t.ndim - 1)))
@@ -31,9 +55,17 @@ def score_hidden_channels(activations: Dict[str, Any]) -> Any:
     if not vectors:
         raise ValueError("No activation vectors were provided")
 
-    # Align by most common hidden dimension and sum scores across layers.
+    # Align by likely hidden dimension and sum scores across layers.
     lens = [int(v.numel()) for v in vectors]
-    target_dim = max(set(lens), key=lens.count)
+    counts = {}
+    for n in lens:
+        counts[n] = counts.get(n, 0) + 1
+    # Hidden size is usually <= 8192 in this project; prefer that range.
+    small_dims = [n for n in counts if n <= 8192]
+    if small_dims:
+        target_dim = max(small_dims, key=lambda n: (counts[n], -n))
+    else:
+        target_dim = max(counts, key=lambda n: counts[n])
     aligned = [v for v in vectors if v.numel() == target_dim]
     if not aligned:
         raise ValueError("Could not find a consistent hidden dimension in activations")

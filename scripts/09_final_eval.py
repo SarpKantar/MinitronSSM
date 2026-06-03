@@ -5,8 +5,12 @@ Reference: plan section 11.
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from _common import base_parser, print_resolved
 
+from minitron_ssm.eval.harness import run_harness
 from minitron_ssm.utils.config import load_base, load_eval
 from minitron_ssm.utils.logging import get_logger
 
@@ -30,15 +34,43 @@ def main() -> int:
         print_resolved("eval", ev)
         return 0
 
-    # TODO(stage-9):
-    #   Compare these checkpoints internally:
-    #       - parent Nemotron-H 8B
-    #       - best pruned candidate (no KD)
-    #       - best pruned candidate after short KD
-    #       - optional mini-final-KD model
-    #   For each: measure_lm_loss, measure_throughput, run_harness.
-    #   Write a CSV under base.paths.eval_dir / "09_final_eval.csv".
-    raise NotImplementedError("TODO(stage-9): wire up final evaluation suite")
+    eval_dir = Path(base.paths.eval_dir)
+    eval_dir.mkdir(parents=True, exist_ok=True)
+
+    top_path = eval_dir / "06_top3.json"
+    kd_path = eval_dir / "08_kd_results.json"
+    models = [
+        {"name": "parent", "checkpoint": base.models.parent},
+    ]
+    if top_path.exists():
+        top = json.loads(top_path.read_text(encoding="utf-8"))
+        if top:
+            models.append({"name": "best_pruned", "checkpoint": top[0]["checkpoint"]})
+    if kd_path.exists():
+        kd = json.loads(kd_path.read_text(encoding="utf-8"))
+        if kd:
+            models.append({"name": "best_kd", "checkpoint": kd[0]["checkpoint"]})
+
+    results = []
+    for entry in models:
+        harness = run_harness(
+            entry["checkpoint"],
+            ev,
+            include_optional=args.include_optional,
+        )
+        results.append(
+            {
+                "model": entry["name"],
+                "checkpoint": entry["checkpoint"],
+                "harness": harness,
+            }
+        )
+        log.info("evaluated %s", entry["name"])
+
+    out_path = eval_dir / "09_final_eval.json"
+    out_path.write_text(json.dumps(results, indent=2), encoding="utf-8")
+    log.info("wrote %s", out_path)
+    return 0
 
 
 if __name__ == "__main__":

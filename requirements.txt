@@ -1,12 +1,21 @@
-# Core
-torch>=2.3
-transformers>=4.44
-accelerate>=0.33
-datasets>=2.20
-tokenizers>=0.19
-safetensors>=0.4
+# ==============================================================================
+# MINITRON SSM - CLUSTER OPTIMIZED REQUIREMENTS (CUDA 12.0 / A100 COMPATIBLE)
+# ==============================================================================
 
-# Config / utilities
+# Core ML Frameworks (Strictly matched for Driver 12.0 and Mamba/Triton 3.5+)
+torch==2.5.1
+transformers==4.46.0
+accelerate>=0.33.0
+datasets>=2.20.0
+tokenizers>=0.19.0
+safetensors>=0.4.0
+
+# Deep Learning Runtime Extensions
+triton==3.1.0
+fsspec[http]==2026.2.0
+requests>=2.32.2
+
+# Config / Utilities
 pyyaml>=6.0
 pydantic>=2.7
 tqdm>=4.66
@@ -15,7 +24,7 @@ numpy>=1.26
 # Evaluation
 lm-eval>=0.4.4
 
-# Dev / test
+# Dev / Test
 pytest>=8.2
 
 # NOTE:

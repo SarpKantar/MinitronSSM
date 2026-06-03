@@ -14,7 +14,12 @@ venv/
 .idea/
 .vscode/
 
+mamba/
+
+Anaconda3-2025.12-2-Linux-x86_64.sh
+
 # Project artifacts
+outputs/
 outputs/scores/*
 outputs/candidates/*
 outputs/checkpoints/*
@@ -30,3 +35,4 @@ outputs/eval/*
 # HF / torch caches when symlinked into the repo
 hf_cache/
 torch_cache/
+Anaconda3-*.sh

@@ -1,0 +1,217 @@
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/selective_scan_interface.py:164: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, xz, conv1d_weight, conv1d_bias, x_proj_weight, delta_proj_weight,
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/selective_scan_interface.py:240: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, dout):
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/triton/layer_norm.py:986: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/triton/layer_norm.py:1045: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, dout, *args):
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/distributed/tensor_parallel.py:26: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, x, weight, bias, process_group=None, sequence_parallel=True):
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/distributed/tensor_parallel.py:62: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/triton/ssd_combined.py:758: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, zxbcdt, conv1d_weight, conv1d_bias, dt_bias, A, D, chunk_size, initial_states=None, seq_idx=None, dt_limit=(0.0, float("inf")), return_final_states=False, activation="silu",
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/triton/ssd_combined.py:836: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, dout, *args):
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:14<00:43, 14.35s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:27<00:27, 13.79s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:42<00:14, 14.09s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:45<00:00,  9.99s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:45<00:00, 11.48s/it]
+Traceback (most recent call last):
+  File "/arf/scratch/skantar/MinitronSSM/scripts/08_kd_train.py", line 99, in <module>
+    raise SystemExit(main())
+  File "/arf/scratch/skantar/MinitronSSM/scripts/08_kd_train.py", line 53, in main
+    student.load_state_dict(state_dict, strict=True)
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2584, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for NemotronHForCausalLM:
+	size mismatch for backbone.layers.0.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.0.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.0.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.0.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.0.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.0.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.0.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.0.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.2.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.2.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.2.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.2.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.2.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.2.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.2.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.2.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.4.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.4.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.4.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.4.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.4.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.4.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.4.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.4.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.6.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.6.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.6.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.6.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.6.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.6.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.6.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.6.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.9.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.9.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.9.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.9.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.9.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.9.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.9.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.9.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.11.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.11.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.11.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.11.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.11.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.11.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.11.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.11.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.13.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.13.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.13.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.13.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.13.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.13.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.13.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.13.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.15.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.15.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.15.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.15.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.15.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.15.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.15.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.15.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.17.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.17.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.17.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.17.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.17.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.17.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.17.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.17.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.20.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.20.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.20.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.20.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.20.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.20.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.20.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.20.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.22.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.22.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.22.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.22.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.22.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.22.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.22.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.22.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.24.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.24.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.24.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.24.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.24.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.24.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.24.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.24.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.26.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.26.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.26.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.26.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.26.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.26.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.26.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.26.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.28.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.28.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.28.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.28.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.28.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.28.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.28.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.28.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.31.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.31.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.31.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.31.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.31.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.31.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.31.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.31.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.33.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.33.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.33.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.33.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.33.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.33.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.33.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.33.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.35.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.35.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.35.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.35.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.35.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.35.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.35.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.35.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.37.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.37.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.37.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.37.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.37.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.37.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.37.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.37.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.39.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.39.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.39.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.39.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.39.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.39.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.39.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.39.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.42.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.42.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.42.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.42.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.42.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.42.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.42.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.42.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.44.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.44.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.44.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.44.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.44.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.44.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.44.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.44.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.46.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.46.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.46.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.46.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.46.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.46.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.46.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.46.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.48.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.48.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.48.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.48.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.48.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.48.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.48.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.48.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).
+	size mismatch for backbone.layers.50.mixer.dt_bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.50.mixer.A_log: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.50.mixer.D: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([120]).
+	size mismatch for backbone.layers.50.mixer.conv1d.weight: copying a param with shape torch.Size([10240, 1, 4]) from checkpoint, the shape in current model is torch.Size([7808, 1, 4]).
+	size mismatch for backbone.layers.50.mixer.conv1d.bias: copying a param with shape torch.Size([10240]) from checkpoint, the shape in current model is torch.Size([7808]).
+	size mismatch for backbone.layers.50.mixer.in_proj.weight: copying a param with shape torch.Size([18560, 3328]) from checkpoint, the shape in current model is torch.Size([13688, 3328]).
+	size mismatch for backbone.layers.50.mixer.norm.weight: copying a param with shape torch.Size([8192]) from checkpoint, the shape in current model is torch.Size([5760]).
+	size mismatch for backbone.layers.50.mixer.out_proj.weight: copying a param with shape torch.Size([3328, 8192]) from checkpoint, the shape in current model is torch.Size([3328, 5760]).

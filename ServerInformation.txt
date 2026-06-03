@@ -1,0 +1,49 @@
+***** TRUBA ****************
+lssrv komutu, TRUBA sisteminde tanımlı olan kuyrukların durumunu görüntülemek için kullanılır.
+sinfo komutunu kullanarak kuyrukların mevcut doluluk durumunu görebilirsiniz.
+
+HPC’lerde login node’da CPU zamanı çok kısadır; uzun işler compute node’da çalıştırılmalıdır:  ulimit -t 
+create .sbatch file then "sbatch <name>.sbatch" squeue YA DA squeue -j <job/process_id>. 
+log kontrolü için: tail -f slurm-<job_id>.out : #SBATCH --output=slurm-%j.out
+after it finishes: sacct -j <job_id> --format=JobID,State,Elapsed,Timelimit,CPUTime,ExitCode,NodeList
+time limit and time: squeue -j 1064608 -o "%.18i %.10T %.10M %.10l"
+to cancel the job: scancel <job_id>
+TRUBA'da max limit 3 gündür. 
+partition (limitleri) hakkında bilgi: scontrol show partition kolyoz-cuda
+insights about the submitted job: scontrol show job <job_id>
+
+interactive shell: srun --pty -p debug --time=01:00:00 --cpus-per-task=4 bash
+
+***** SLURM ****************
+Any sub-steps (srun inside that shell) cannot exceed the allocation.
+allocated gpu resources: nvidia-smi -L
+memory size of each allocated gpu: nvidia-smi --query-gpu=name,memory.total --format=csv
+my jobs: squeue -u  : all jobs: squeue : squeue -w romer1
+R → Running → şu anda çalışıyor
+PD → Pending → kuyruğa girmiş ama çalışmaya başlamamış
+CG → Completing → iş bitiyor, cleanup yapılıyor
+CD → Completed (bazı çıktılarda) 
+source ~/.bashrc
+--------- TRUBA Servers ----------------
+sinfo -p kolyoz-cuda,palamut-cuda -o "%N %G %f"
+palamut[1-9] gpu:8 palamut
+kolyoz[25-72] gpu:4 H200
+kolyoz[1-24] gpu:4 H100
+
+* işareti = default (varsayılan) partition
+(null) = GPU yok, sadece CPU
+9 tane sunucu var: palamut1, palamut2 vs. 
+you must require a time limit within 24 hours for interative jobs.
+
+Genel gpu durumu: sinfo -o "%.15P %.10l %.6D %.6t %.8z %.10m %.15C %.8G %N" -p palamut-cuda,kolyoz-cuda
+Genel gpu durumu: sinfo -o "%P %D %t %f %G"
+Boş GPU sayısı: sinfo -o "%P %F %G" -p palamut-cuda,kolyoz-cuda | grep gpu  : Allocated/Idle/Other(down/draining)/Total
+
+GRES shows per-node GPU count. 
+Mixed — some GPUs/CPUs used, some free. 
+idle - Completely free (you can schedule on it).
+resv - Reserved (often for another user, maintenance window, or a running reservation).
+drng / drain / drain*	Draining — node being decommissioned, under maintenance, or in an unusable state.
+
+running interactive jobs: srun --gres=gpu:1 --cpus-per-task=16 --time=03:00:00 --pty bash
+		srun --pty -p palamut-cuda --gres=gpu:1 --cpus-per-task=16 --time=03:00:00 bash

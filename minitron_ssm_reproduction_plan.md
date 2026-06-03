@@ -835,3 +835,130 @@ This appendix maps core plan sections to the scaffolded implementation files in 
 - Shared configuration and utilities: `configs/base.yaml`, `configs/data.yaml`, `configs/importance.yaml`, `configs/search_space.yaml`, `configs/kd.yaml`, `src/minitron_ssm/utils/config.py`, `src/minitron_ssm/utils/shape_check.py`
 
 Implementation status rule: modules marked with `TODO(stage-N)` are intentionally scaffold-only and get completed during the corresponding execution stage.
+
+## 20. Live Implementation Status (Updated in Chat)
+
+This section tracks *actual* repository progress so future chats can resume quickly.
+
+---
+
+### Pipeline execution status (as of 2026-06-03)
+
+| Stage | Script | Status | Output artifact |
+|-------|--------|--------|-----------------|
+| 01 | `01_baseline.py` | ✅ Done (job 1280917) | `outputs/eval/01_baseline.json` — loss=2.3257, ppl=10.23 |
+| 02 | `02_importance.py` | ✅ Done (prior job) | `outputs/scores/importance.pt` |
+| 03 | `03_generate_candidates.py` | ✅ Done (job 1280919) | `outputs/candidates/candidates.json` — 20 candidates |
+| 04 | `04_prune_candidates.py` | ✅ Done (job 1280919) | `outputs/checkpoints/*/` — 21 checkpoints |
+| 05 | `05_eval_candidates.py` | ✅ Done (job 1280919) | `outputs/eval/05_candidates.json` |
+| 06 | `06_select_top3.py` | ✅ Done (job 1280919) | `outputs/eval/06_top3.json` — cand-009, cand-016, cand-006 |
+| 07 | `07_kd_smoke.py` | 🔁 Re-running after CUDA OOM fix (seq_len 8192→2048) | — |
+| 08 | `08_kd_train.py` | ⏳ Not started | — |
+| 09 | `09_final_eval.py` | ⏳ Not started | — |
+| 10 | `10_optional_mini_kd.py` | ⏳ Optional | — |
+
+---
+
+### Known blocker: Mamba pruning silently no-op'd in stage 04
+
+**Root cause:** `apply_candidate` in `src/minitron_ssm/pruning/apply.py` passes a `NemotronHBlock` (the full transformer block) to `prune_mamba_heads` and `prune_mamba_head_channels`, but those functions call `_get_int_attr(layer, ["n_heads","num_heads"], 0)` which returns `0` on the block because `num_heads` lives on `block.mixer`, not on the block itself. Both functions then hit the early-return guard `if n_heads <= 0: return` and silently do nothing.
+
+**Effect:** The saved checkpoints in `outputs/checkpoints/*/` have:
+- ✅ FFN neurons pruned correctly
+- ✅ Embedding/hidden dim pruned correctly (e.g. 4096 → 3328 for cand-009)
+- ❌ `mamba_num_heads` still 128 (parent value, not pruned to 120)
+- ❌ `mamba_head_dim` still 64 (parent value, not pruned to 48)
+
+**Evidence:** Stage 07 (job 1285548) failed with:
+```
+size mismatch for backbone.layers.0.mixer.dt_bias:
+    checkpoint shape [128], model shell shape [120]
+```
+because `build_pruned_model` was updated to override `mamba_num_heads=120` in the config but the actual checkpoint weight has 128 heads.
+
+**Fix options for next chat:**
+
+Option A — Fastest (no re-run needed): Remove the Mamba-dimension overrides from `build_pruned_model` (`mamba_num_heads`, `mamba_head_dim`, `mamba_groups`). The model shell will be built with the actual saved dimensions (128/64), matching the checkpoint. KD will train a model that has FFN + embedding pruned but not Mamba-pruned. Still a valid partial reproduction.
+
+Option B — Correct but expensive (re-run stage 04+05+06): Fix `apply_candidate` to drill into `block.mixer` when calling `prune_mamba_heads` / `prune_mamba_head_channels`, then re-run stage 04 (6 min), 05 (11 h), 06 (<1 min), 07, 08. Costs another overnight run just for stage 05.
+
+**Recommendation given 5-day deadline:** Apply Option A immediately so KD can proceed on existing artifacts. Document Mamba pruning as a known limitation of this reproduction run.
+
+**Fix location:**
+- File: `src/minitron_ssm/models/load.py`, function `build_pruned_model`
+- Remove these three override entries from the `overrides` dict:
+  ```python
+  "mamba_heads": ("mamba_num_heads", "num_heads"),
+  "mamba_head_channels": ("mamba_head_dim", "head_dim"),
+  "mamba_groups": ("n_groups",),
+  ```
+
+---
+
+### Known blocker (RESOLVED): CUDA OOM in stage 07/08 KD forward pass
+
+**Symptom:** Both `run_kd_smoke.slurm` (job 1285550) and `run_kd_train.slurm`
+(job 1285551) crashed with:
+```
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 64.00 GiB.
+... at modeling_nemotron_h.py:647
+    G_intermediate = C[:, :, :, None, :, :] * B[:, :, None, :, :, :]  # (b, c, l, s, h, n)
+```
+
+**Root cause:** `disable_fast_mamba_kernels` repoints the student's Mamba mixers
+to `torch_forward` (the naive SSD reference path) to avoid the
+`causal_conv1d_fwd() incompatible arguments` TypeError in the fused training
+kernel. That naive path materialises a single fp32 tensor of shape
+`(b, c, l, s, h, n)` = `(1, seq_len/128, 128, 128, 128, 128)` =
+**`(seq_len/128)` GiB**, i.e. exactly 64 GiB at `seq_len=8192`. It is one
+contiguous allocation, so it cannot be sharded or checkpointed away — the only
+lever is `seq_len`. (The teacher is unaffected: it still uses the fused
+`cuda_kernels_forward` which never builds this tensor.)
+
+A second latent OOM was also waiting at the first `optimizer.step()`:
+teacher (~17 GB) + student (~10 GB) + grads (~10 GB) + AdamW moments (~19 GB,
+bf16 since the student params are bf16) ≈ 56 GB fixed, leaving only ~24 GB for
+the transient `G_intermediate`. `seq_len=2048` (16 GiB) fits this budget;
+`seq_len=4096` (32 GiB) would not.
+
+**Fix applied:**
+- `configs/kd.yaml`: `training.seq_len` 8192 → 2048 (with an explanatory comment).
+- `run_kd_smoke.slurm` / `run_kd_train.slurm`: export
+  `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` to reduce allocator
+  fragmentation (explicitly recommended by the OOM message).
+
+If 2048 still proves tight in practice, the next step down is `seq_len=1024`
+(8 GiB transient). Installing `bitsandbytes` for 8-bit AdamW would free a
+further ~10 GB and is the path to restoring a longer `seq_len`.
+
+---
+
+### Code changes made in this chat session
+
+- `src/minitron_ssm/models/load.py`:
+  - Added `disable_fast_mamba_kernels(model)` — monkey-patches `cuda_kernels_forward → torch_forward` on all Mamba mixer blocks to avoid `TypeError: causal_conv1d_fwd() incompatible arguments` during training.
+  - `build_pruned_model` extended to override Mamba config fields (currently over-aggressive — see blocker above).
+- `scripts/07_kd_smoke.py`: calls `disable_fast_mamba_kernels` on the KD student.
+- `scripts/08_kd_train.py`: aligned with stage-05 loading pattern (`build_pruned_model` + `strict=True`); calls `disable_fast_mamba_kernels`.
+- `configs/kd.yaml`: reduced token budgets (`smoke_test_tokens` 10M→2M, `tokens_per_candidate` 200M→20M).
+- `run_kd_smoke.slurm`: new Slurm script for stage 07 only.
+- `run_kd_train.slurm`: new Slurm script for stage 08 only.
+- All four Slurm scripts redirect output to `logs/<name>/slurm-<jobid>.{out,err}`.
+- `runtime_estimates.md`: per-script wall-time estimates table.
+
+---
+
+### Non-blocking warnings (safe to ignore)
+
+- `FutureWarning` from `mamba_ssm` AMP decorators (`custom_fwd`/`custom_bwd`)
+- `torch.load weights_only=False` future warning
+- `Token indices sequence length > 8192` tokenizer warning
+- `right-padding detected` generation warning
+- `FFN scores insufficient, falling back to weight-based scoring` — expected when activation-based scores don't cover the target FFN width
+
+---
+
+### Verification done
+
+- `python -m compileall -q src scripts` passed (no syntax errors).
+- `python scripts/07_kd_smoke.py --dry-run` and `08_kd_train.py --dry-run` both passed, showing new token budgets correctly.

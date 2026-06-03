@@ -51,7 +51,7 @@ Use the **conda** environment `minitron` (dependencies are installed there).
 
 ```bash
 conda activate minitron
-cd /Users/sarpkantar/Desktop/MinitronSSM   # repo root — required for pip -e
+cd /arf/scratch/skantar/MinitronSSM   # repo root — required for pip -e
 pip install -e ".[dev,eval]"              # editable install of this repo only
 pytest
 python scripts/03_generate_candidates.py
@@ -62,7 +62,7 @@ On the A100 cluster (same `minitron` env), additionally install:
 
 ```bash
 conda activate minitron
-pip install "mamba-ssm==2.*" "causal-conv1d>=1.4"
+pip install "mamba-ssm==2.*" "causal-conv1d>=1.4" --no-build-isolation
 ```
 
 ## Status

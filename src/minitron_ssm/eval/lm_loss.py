@@ -8,7 +8,6 @@ TODO(stage-1 / stage-5 / stage-9): real implementation.
 from __future__ import annotations
 
 import math
-from contextlib import nullcontext
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Iterator
 
@@ -40,10 +39,10 @@ def measure_lm_loss(
 
     model.eval()
     device = next(model.parameters()).device
-    use_autocast = device.type == "cuda"
 
     total_nll = 0.0
     total_tokens = 0
+    skipped_batches = 0
 
     with torch.no_grad():
         for batch in val_loader:
@@ -57,40 +56,47 @@ def measure_lm_loss(
             input_ids = input_ids.to(device)
             labels = labels.to(device)
 
-            autocast_ctx = (
-                torch.cuda.amp.autocast(dtype=torch.bfloat16)
-                if use_autocast
-                else nullcontext()
-            )
-            with autocast_ctx:
-                out = model(input_ids=input_ids, labels=labels, use_cache=False)
+            # Run the model in its native (already-bf16) dtype. Wrapping an
+            # already-bf16 model in torch.autocast(bf16) interferes with the
+            # mamba_ssm Triton/CUDA kernels and is a known NaN source for
+            # NemotronH/Mamba2, so we deliberately do not autocast here.
+            out = model(input_ids=input_ids, use_cache=False)
 
-            if getattr(out, "loss", None) is not None:
-                token_mask = (labels != -100)
-                n_tokens = int(token_mask.sum().item())
-                if n_tokens <= 0:
-                    continue
-                total_nll += float(out.loss.item()) * n_tokens
-                total_tokens += n_tokens
-            else:
-                logits = out.logits
-                shift_logits = logits[:, :-1, :].contiguous()
-                shift_labels = labels[:, 1:].contiguous()
-                loss = F.cross_entropy(
-                    shift_logits.view(-1, shift_logits.size(-1)),
-                    shift_labels.view(-1),
-                    reduction="sum",
-                    ignore_index=-100,
-                )
-                n_tokens = int((shift_labels != -100).sum().item())
-                total_nll += float(loss.item())
-                total_tokens += n_tokens
+            # Always compute the loss ourselves in fp32. Letting the model
+            # compute cross-entropy on bf16 logits over a 131072-token vocab
+            # can overflow to inf/NaN and poison the running average.
+            logits = out.logits.float()
+            shift_logits = logits[:, :-1, :].contiguous()
+            shift_labels = labels[:, 1:].contiguous()
+            n_tokens = int((shift_labels != -100).sum().item())
+            if n_tokens <= 0:
+                continue
+            loss = F.cross_entropy(
+                shift_logits.view(-1, shift_logits.size(-1)),
+                shift_labels.view(-1),
+                reduction="sum",
+                ignore_index=-100,
+            )
+
+            # Guard: a single non-finite batch must not poison the average.
+            if not torch.isfinite(loss):
+                skipped_batches += 1
+                continue
+
+            total_nll += float(loss.item())
+            total_tokens += n_tokens
 
             if total_tokens >= num_tokens:
                 break
 
     if total_tokens == 0:
         raise ValueError("No tokens were processed in measure_lm_loss")
+    if skipped_batches:
+        from ..utils.logging import get_logger
+
+        get_logger("lm_loss").warning(
+            "skipped %d batch(es) with non-finite loss", skipped_batches
+        )
 
     avg_loss = total_nll / total_tokens
     ppl = math.exp(min(avg_loss, 50.0))

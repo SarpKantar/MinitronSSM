@@ -1,0 +1,67 @@
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/selective_scan_interface.py:164: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, xz, conv1d_weight, conv1d_bias, x_proj_weight, delta_proj_weight,
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/selective_scan_interface.py:240: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, dout):
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/triton/layer_norm.py:986: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/triton/layer_norm.py:1045: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, dout, *args):
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/distributed/tensor_parallel.py:26: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, x, weight, bias, process_group=None, sequence_parallel=True):
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/distributed/tensor_parallel.py:62: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/triton/ssd_combined.py:758: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, zxbcdt, conv1d_weight, conv1d_bias, dt_bias, A, D, chunk_size, initial_states=None, seq_idx=None, dt_limit=(0.0, float("inf")), return_final_states=False, activation="silu",
+/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/mamba_ssm/ops/triton/ssd_combined.py:836: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, dout, *args):
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:01<00:05,  1.70s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:03<00:03,  1.69s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:05<00:01,  1.69s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:05<00:00,  1.23s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:05<00:00,  1.40s/it]
+/arf/scratch/skantar/MinitronSSM/src/minitron_ssm/kd/trainer.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  torch.cuda.amp.autocast(dtype=torch.bfloat16)
+/arf/scratch/skantar/MinitronSSM/src/minitron_ssm/kd/trainer.py:141: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  torch.cuda.amp.autocast(dtype=torch.bfloat16)
+Traceback (most recent call last):
+  File "/arf/scratch/skantar/MinitronSSM/scripts/08_kd_train.py", line 99, in <module>
+    raise SystemExit(main())
+  File "/arf/scratch/skantar/MinitronSSM/scripts/08_kd_train.py", line 73, in main
+    state = trainer.train(target_tokens=int(kd.budget.tokens_per_candidate))
+  File "/arf/scratch/skantar/MinitronSSM/src/minitron_ssm/kd/trainer.py", line 145, in train
+    student_logits = self.student(
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/arf/home/skantar/.cache/huggingface/modules/transformers_modules/nvidia/Nemotron-H-8B-Base-8K/94ea861e008c2dfced3e8e1302094024077aa04e/modeling_nemotron_h.py", line 1593, in forward
+    nemotron_h_outputs = self.backbone(
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/arf/home/skantar/.cache/huggingface/modules/transformers_modules/nvidia/Nemotron-H-8B-Base-8K/94ea861e008c2dfced3e8e1302094024077aa04e/modeling_nemotron_h.py", line 1380, in forward
+    hidden_states = self._gradient_checkpointing_func(
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/_compile.py", line 32, in inner
+    return disable_fn(*args, **kwargs)
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+    return fn(*args, **kwargs)
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 489, in checkpoint
+    return CheckpointFunction.apply(function, preserve, *args)
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 264, in forward
+    outputs = run_function(*args)
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/arf/home/skantar/.cache/huggingface/modules/transformers_modules/nvidia/Nemotron-H-8B-Base-8K/94ea861e008c2dfced3e8e1302094024077aa04e/modeling_nemotron_h.py", line 774, in forward
+    hidden_states = self.mixer(
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/arf/home/skantar/anaconda3/envs/minitron/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/arf/home/skantar/.cache/huggingface/modules/transformers_modules/nvidia/Nemotron-H-8B-Base-8K/94ea861e008c2dfced3e8e1302094024077aa04e/modeling_nemotron_h.py", line 714, in forward
+    return self.cuda_kernels_forward(hidden_states, cache_params, cache_position, attention_mask)
+  File "/arf/home/skantar/.cache/huggingface/modules/transformers_modules/nvidia/Nemotron-H-8B-Base-8K/94ea861e008c2dfced3e8e1302094024077aa04e/modeling_nemotron_h.py", line 647, in torch_forward
+    G_intermediate = C[:, :, :, None, :, :] * B[:, :, None, :, :, :]  # shape: (b, c, l, s, h, n)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 64.00 GiB. GPU 0 has a total capacity of 79.25 GiB of which 47.07 GiB is free. Including non-PyTorch memory, this process has 32.17 GiB memory in use. Of the allocated memory 30.86 GiB is allocated by PyTorch, and 832.43 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+terminate called without an active exception
+/tmp/slurmd/job1285551/slurm_script: line 18: 313648 Aborted                 (core dumped) "$@"
