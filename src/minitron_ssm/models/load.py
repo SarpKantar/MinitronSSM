@@ -76,6 +76,7 @@ def load_parent(
     base_cfg: BaseConfig,
     *,
     eval_mode: bool = True,
+    template_on_cpu: bool = False,
 ) -> Tuple[Any, Any]:
     """Load ``base_cfg.models.parent`` and its tokenizer.
 
@@ -84,6 +85,13 @@ def load_parent(
     (model, tokenizer)
         ``model`` in ``base_cfg.hardware.precision`` on the configured
         device; ``tokenizer`` is the matching HF tokenizer.
+
+    Parameters
+    ----------
+    template_on_cpu:
+        When True, keep the parent on CPU even if CUDA is available. Use this
+        when the parent is only an architecture template for building pruned/KD
+        students so a single GPU can host the student checkpoint alone.
 
     """
     import torch
@@ -100,7 +108,11 @@ def load_parent(
     if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    if torch.cuda.is_available() and base_cfg.hardware.device == "cuda":
+    if (
+        torch.cuda.is_available()
+        and base_cfg.hardware.device == "cuda"
+        and not template_on_cpu
+    ):
         # Let transformers shard across visible GPUs automatically.
         model = AutoModelForCausalLM.from_pretrained(
             base_cfg.models.parent,

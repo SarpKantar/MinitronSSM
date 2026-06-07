@@ -15,6 +15,14 @@ source /arf/home/skantar/anaconda3/etc/profile.d/conda.sh
 conda activate minitron
 cd /arf/scratch/skantar/MinitronSSM
 
+# Time-sortable, human-readable aliases for this job's logs. Slurm writes the live
+# logs to slurm-<jobid>.{out,err}; these symlinks prefix the job start time
+# (YYYYMMDD-HHMMSS) so `ls logs/kd_smoke` shows oldest -> newest at a glance.
+LOG_DIR=logs/kd_smoke
+STAMP=$(date +%Y%m%d-%H%M%S)
+ln -sf "slurm-${SLURM_JOB_ID}.out" "${LOG_DIR}/${STAMP}-job${SLURM_JOB_ID}.out"
+ln -sf "slurm-${SLURM_JOB_ID}.err" "${LOG_DIR}/${STAMP}-job${SLURM_JOB_ID}.err"
+
 # Reduce CUDA allocator fragmentation; the Mamba torch_forward fallback allocates
 # large short-lived fp32 tensors and benefits from expandable segments.
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True

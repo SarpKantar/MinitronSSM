@@ -1,3 +1,0 @@
-[Wed Jun  3 06:54:23 PM +03 2026] Job started on palamut1
-[Wed Jun  3 06:54:24 PM +03 2026] >>> Running: python scripts/08_kd_train.py
-2026-06-03 18:55:10 [INFO] kd-train: disabled fused Mamba kernels for 24 module(s) in KD student cand-009

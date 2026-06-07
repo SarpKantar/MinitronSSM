@@ -8,7 +8,11 @@ objective:
 
 budget:
   top_candidates: 3
-  tokens_per_candidate: 20_000_000   # reduced from 200M → ~7h per candidate on A100
+  # 200M (paper) -> 20M -> 15M. At seq_len=1024 (~4.7 s/step, 1024 tok/step) one
+  # candidate is ~14.6k steps ≈ 19 h, which fits a single 24h Slurm slot with
+  # margin. Stage 08 now runs one-candidate-per-job (Slurm array), so this is the
+  # per-job budget rather than a 3x sequential total.
+  tokens_per_candidate: 15_000_000
   smoke_test_tokens: 2_000_000       # reduced from 10M → ~1h sanity check
 
 training:
@@ -17,11 +21,23 @@ training:
   # materialises a fp32 tensor of shape (b, c, l, s, h, n) costing (seq_len/128) GiB
   # for one chunk -> 64 GiB at seq_len=8192, which OOMs a single 80GB A100 once the
   # teacher (~17 GB) + student (~10 GB) + grads + AdamW moments are also resident.
-  # 2048 keeps that transient tensor at 16 GiB, leaving headroom for the optimizer.
-  seq_len: 2048             # was 8192; reduced for torch_forward memory footprint
-  global_batch_size: 768    # paper value; reduce locally
+  # The transient tensor is (seq_len/128) GiB. At seq_len=2048 (16 GiB) the run
+  # trains fine UNTIL the first optimizer.step() allocates the AdamW moment
+  # buffers (~19 GB); the next backward's 16 GiB transient then overflows the
+  # 80GB card by ~1 GiB (observed: 64.2 GB resident + 16 GiB alloc). seq_len=1024
+  # halves the transient to 8 GiB, leaving ~12 GB headroom on top of the
+  # teacher + student + grads + optimizer-state footprint (~56 GB).
+  seq_len: 1024             # was 8192 -> 2048 -> 1024; sized for torch_forward + AdamW state
+  global_batch_size: 768    # paper value (sequences); NOT used while grad_accumulation is set explicitly
   micro_batch_size: 1
-  grad_accumulation: "auto" # derived from global / micro / num_gpus
+  # grad_accumulation was previously "auto" => 768/1 = 768 micro-steps per optimizer
+  # update. With the slashed token budgets (smoke 2M, train 20M) and seq_len 2048
+  # that yields ~1 (smoke) / ~12 (train) actual weight updates, i.e. effectively no
+  # training -- the loss just shows batch-to-batch noise on the frozen init weights.
+  # Use a concrete, budget-appropriate accumulation so the model actually learns:
+  #   tokens/update = grad_accumulation * micro_batch_size * seq_len = 8 * 1 * 2048 = 16384
+  #   => smoke ~122 updates, train ~1221 updates per candidate.
+  grad_accumulation: 8
   activation_checkpointing: true
 
 optimizer:

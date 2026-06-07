@@ -131,9 +131,17 @@ def kd_blended_loss(
             raise ValueError("either teacher_logits or teacher_topk_* must be provided")
         kd = kd_kl_loss(student_logits, teacher_logits, temperature=temperature)
 
+    # Causal-LM CE: predict token t+1 from the logits at position t, so the
+    # logits and targets must be shifted relative to each other.
+    if student_logits.dim() >= 2 and student_logits.size(-2) > 1:
+        shift_logits = student_logits[..., :-1, :].contiguous()
+        shift_targets = targets[..., 1:].contiguous()
+    else:
+        shift_logits = student_logits
+        shift_targets = targets
     ce = F.cross_entropy(
-        student_logits.reshape(-1, student_logits.size(-1)),
-        targets.reshape(-1),
+        shift_logits.reshape(-1, shift_logits.size(-1)),
+        shift_targets.reshape(-1),
         ignore_index=ignore_index,
     )
     return alpha * kd + (1.0 - alpha) * ce

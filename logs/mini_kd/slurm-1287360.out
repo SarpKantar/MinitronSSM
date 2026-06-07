@@ -1,0 +1,4 @@
+[Fri Jun  5 21:34:10 +03 2026] Job 1287360 started on palamut6
+[Fri Jun  5 21:34:10 +03 2026] CUDA_VISIBLE_DEVICES=0
+visible GPU preflight: free=78.84 GiB total=79.25 GiB
+[Fri Jun  5 21:34:53 +03 2026] >>> Running stage 10b

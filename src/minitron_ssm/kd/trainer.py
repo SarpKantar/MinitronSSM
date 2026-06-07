@@ -76,7 +76,9 @@ class KDTrainer:
             weight_decay=float(cfg.optimizer.weight_decay),
             betas=tuple(cfg.optimizer.betas),
         )
-        self.scheduler = self._build_scheduler()
+        # Scheduler is built lazily in ``train`` once the total number of
+        # optimizer steps is known (it depends on the token budget).
+        self.scheduler = None
 
     def _resolve_grad_accumulation(self, cfg: KDConfig) -> int:
         ga = cfg.training.grad_accumulation
@@ -88,19 +90,28 @@ class KDTrainer:
             return max(1, (gbs + mbs - 1) // mbs)
         raise ValueError(f"Unsupported grad_accumulation value: {ga!r}")
 
-    def _build_scheduler(self):
+    def _build_scheduler(self, total_steps: int):
+        """Warmup-then-cosine schedule that decays over the *whole* run.
+
+        ``total_steps`` is the total number of optimizer updates (not
+        micro-steps). The previous implementation tied the cosine decay
+        horizon to ``warmup_steps`` and therefore drove the LR to its floor
+        within ~``warmup_steps`` updates regardless of how long training
+        actually ran.
+        """
         import math
         import torch
 
         warmup_steps = self.cfg.scheduler.warmup_steps or 0
+        floor = float(self.cfg.scheduler.min_lr_ratio)
+        decay_steps = max(1, total_steps - warmup_steps)
 
         def _lr_lambda(step: int) -> float:
             if warmup_steps > 0 and step < warmup_steps:
-                return max(step, 1) / max(warmup_steps, 1)
-            decay_step = max(step - warmup_steps, 0)
-            t = min(1.0, decay_step / max(warmup_steps + 1, 1))
-            cosine = 0.5 * (1.0 + math.cos(math.pi * t))
-            floor = float(self.cfg.scheduler.min_lr_ratio)
+                return float(step + 1) / float(warmup_steps)
+            progress = (step - warmup_steps) / decay_steps
+            progress = min(1.0, max(0.0, progress))
+            cosine = 0.5 * (1.0 + math.cos(math.pi * progress))
             return floor + (1.0 - floor) * cosine
 
         return torch.optim.lr_scheduler.LambdaLR(self.optimizer, lr_lambda=_lr_lambda)
@@ -109,10 +120,27 @@ class KDTrainer:
         """Train until ``target_tokens`` student tokens have been seen.
 
         """
+        import math
+
         import torch
 
         if target_tokens <= 0:
             raise ValueError(f"target_tokens must be > 0, got {target_tokens}")
+
+        # Total optimizer updates over the run, so the LR schedule spans the
+        # whole budget instead of collapsing to the floor early.
+        micro = max(1, int(self.cfg.training.micro_batch_size))
+        seq_len = max(1, int(self.cfg.training.seq_len))
+        tokens_per_update = max(1, self.grad_accumulation * micro * seq_len)
+        total_opt_steps = max(1, math.ceil(target_tokens / tokens_per_update))
+        self.scheduler = self._build_scheduler(total_opt_steps)
+        self.log.info(
+            "scheduler: %d optimizer steps (grad_accum=%d, tokens/update=%d, warmup=%d)",
+            total_opt_steps,
+            self.grad_accumulation,
+            tokens_per_update,
+            self.cfg.scheduler.warmup_steps or 0,
+        )
 
         device = next(self.student.parameters()).device
         use_autocast = device.type == "cuda"

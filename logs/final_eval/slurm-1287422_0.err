@@ -1,0 +1,2 @@
+[Fri Jun  5 22:02:59 +03 2026] Allocated GPU is contaminated; requeueing (attempt 0/5).
+slurmstepd: error: *** JOB 1287428 ON palamut5 CANCELLED AT 2026-06-05T22:02:59 DUE TO JOB REQUEUE ***

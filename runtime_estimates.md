@@ -8,18 +8,18 @@ KD estimates are calculated from calibration data (see Notes).
 
 ## Summary table
 
-| # | Script | Token / sample budget | Est. wall time | Status | Slurm script |
-|---|--------|-----------------------|----------------|--------|--------------|
-| 01 | `01_baseline.py` | 1M val tokens + throughput | ~50 min | ✅ done (job 1280917) | `run_baseline.slurm` |
-| 02 | `02_importance.py` | 1024 calibration batches × 8192 | ~30–60 min | ✅ done (prior job) | — |
-| 03 | `03_generate_candidates.py` | CPU-only enumeration | < 1 min | ✅ done (job 1280919) | `run_overnight.slurm` |
-| 04 | `04_prune_candidates.py` | CPU-side slicing × 20 candidates | ~6 min | ✅ done (job 1280919) | `run_overnight.slurm` |
-| 05 | `05_eval_candidates.py` | 1M val tokens × 21 candidates | ~11 h | ✅ done (job 1280919) | `run_overnight.slurm` |
-| 06 | `06_select_top3.py` | read/sort JSON | < 1 min | ✅ done (job 1280919) | `run_overnight.slurm` |
-| 07 | `07_kd_smoke.py` | **2M tokens**, 1 candidate | ~1–2 h | ⏳ pending | `run_kd_smoke.slurm` |
-| 08 | `08_kd_train.py` | **20M tokens × 3 candidates** | ~18–22 h | ⏳ pending | `run_kd_train.slurm` |
-| 09 | `09_final_eval.py` | lm-eval-harness 7 tasks × 3 models | ~4–8 h | ⏳ pending | (separate job needed) |
-| 10 | `10_optional_mini_kd.py` | 1B tokens (default), 1 candidate | ~50 h | ⏳ optional | (separate job, skip if no time) |
+| # | Script | Paper target | Implemented budget | Actual wall time | Status | Slurm script |
+|---|--------|-------------|-------------------|-----------------|--------|--------------|
+| 01 | `01_baseline.py` | 1M val tokens | 1M val tokens | 50 min (obs.) | ✅ done (job 1280917) | `run_baseline.slurm` |
+| 02 | `02_importance.py` | 1024 cal. batches × 8192 | same | ~45 min (obs.) | ✅ done (prior job) | — |
+| 03 | `03_generate_candidates.py` | — | CPU enumeration | < 1 min | ✅ done (job 1280919) | `run_overnight.slurm` |
+| 04 | `04_prune_candidates.py` | — | 20 candidates | ~6 min | ✅ done (job 1280919) | `run_overnight.slurm` |
+| 05 | `05_eval_candidates.py` | 1M val tokens × 21 | 1M × 21 | 10h 51m (obs.) | ✅ done (job 1280919) | `run_overnight.slurm` |
+| 06 | `06_select_top3.py` | — | read/sort JSON | < 1 min | ✅ done (job 1280919) | `run_overnight.slurm` |
+| 07 | `07_kd_smoke.py` | — (not in paper) | **2M** (plan: 10M) | 2.5 h (obs.) | ✅ done (job 1285584) | `run_kd_smoke.slurm` |
+| 08 | `08_kd_train.py` | **200M × 3** | **15M × 3** (Slurm array) | ~19 h/candidate (obs.) | ✅ done (array 1285594) | `run_kd_train.slurm` |
+| 09 | `09_final_eval.py` | 7 harness tasks × 3 models | same | ~4–8 h (est.) | ⏳ ready | `run_final_eval.slurm` |
+| 10 | `10_optional_mini_kd.py` | 380B (full final KD) | **10M** (script default: 1B) | ~13 h (est.) | 🔁 running (job 1286115) | `run_mini_kd.slurm` |
 
 ---
 
@@ -93,11 +93,15 @@ The per-step timing (16s) is derived from the stage 05 eval calibration:
 
 ---
 
-## Token budget changes (vs original plan)
+## Token budget changes (vs paper and original plan)
 
-| Parameter | Original | New |
-|-----------|---------|-----|
-| `smoke_test_tokens` | 10M | **2M** |
-| `tokens_per_candidate` (stage 08) | 200M | **20M** |
+| Parameter | Paper target | Original plan | Final implemented | Where changed |
+|-----------|-------------|---------------|------------------|---------------|
+| `smoke_test_tokens` (stage 07) | not specified | 10M | **2M** | `configs/kd.yaml` |
+| `tokens_per_candidate` (stage 08) | **200M** | 200M | **15M** | `configs/kd.yaml` |
+| `seq_len` (stages 07/08/10) | **8192** | 8192 | **1024** | `configs/kd.yaml` |
+| `grad_accumulation` (all KD) | ~768 (global/micro) | `"auto"` | **8** | `configs/kd.yaml` |
+| `target_tokens` (stage 10) | 380B | 1B (default) | **10M** | `run_mini_kd.slurm` |
 
-Changes are in `configs/kd.yaml`.
+All reductions forced by the `torch_forward` Mamba fallback memory + throughput
+ceiling on a single 80 GB A100 (see plan §20 for root cause details).

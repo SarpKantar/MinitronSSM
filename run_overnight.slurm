@@ -18,6 +18,14 @@ conda activate minitron
 # Project
 cd /arf/scratch/skantar/MinitronSSM
 
+# Time-sortable, human-readable aliases for this job's logs. Slurm writes the live
+# logs to slurm-<jobid>.{out,err}; these symlinks prefix the job start time
+# (YYYYMMDD-HHMMSS) so `ls logs/overnight` shows oldest -> newest at a glance.
+LOG_DIR=logs/overnight
+STAMP=$(date +%Y%m%d-%H%M%S)
+ln -sf "slurm-${SLURM_JOB_ID}.out" "${LOG_DIR}/${STAMP}-job${SLURM_JOB_ID}.out"
+ln -sf "slurm-${SLURM_JOB_ID}.err" "${LOG_DIR}/${STAMP}-job${SLURM_JOB_ID}.err"
+
 run_stage () {
   echo "[$(date)] >>> Running: $*"
   "$@"

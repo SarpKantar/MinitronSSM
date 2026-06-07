@@ -1,0 +1,947 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-07T20:53:44+0300",
+  "generation_seconds": 7.233438730239868,
+  "repository": {
+    "commit": "2ac4df5b25f35e37f4a3e1b847a3eec4faff3dbc",
+    "branch": "main",
+    "dirty": true
+  },
+  "source_artifacts": [
+    {
+      "path": "outputs/candidates/candidates.json",
+      "size_bytes": 6195,
+      "sha256": "6c56a22fb8821a847ebbd82f48ed3a8d1b9074ff5312bfe49baea53afe4bfb21"
+    },
+    {
+      "path": "outputs/eval/01_baseline.json",
+      "size_bytes": 2923,
+      "sha256": "ba80542d27a104eac897d64f8efed6fe8f1aa9e9cfa8aa78aeaee36b77bbd144"
+    },
+    {
+      "path": "outputs/eval/05_candidates.json",
+      "size_bytes": 14877,
+      "sha256": "ec6dc41c2fc82b0545b2cd6350b278e5adabb8b67866383925b1bcc8f9d837e5"
+    },
+    {
+      "path": "outputs/eval/06_top3.json",
+      "size_bytes": 2228,
+      "sha256": "ddc7056edab34948ad38b68969505b1d8cc707b64fc90edc15a5d446b7658b67"
+    },
+    {
+      "path": "outputs/eval/08_kd_results.json",
+      "size_bytes": 539,
+      "sha256": "297ed7e6108b2b5ac47236259e3ab320ab089a20b94abdcce704f3f489967cba"
+    },
+    {
+      "path": "outputs/eval/08_kd_results_round2.json",
+      "size_bytes": 707,
+      "sha256": "e689c06719a902efdf248f98667509bc775ec154e3dfb60d361e628b1bf97a6a"
+    },
+    {
+      "path": "outputs/eval/09_final_eval.json",
+      "size_bytes": 426282623,
+      "sha256": "b7c796220232259d094fbce2a7c136ab16d33cac3de28134c6b96570cb0eadcb"
+    },
+    {
+      "path": "outputs/eval/09_final_eval_mini_kd.json",
+      "size_bytes": 164768,
+      "sha256": "006f45665a9042b0fbe91fcd1117f9df2e939d37e57a6ffd881632133ee31008"
+    },
+    {
+      "path": "outputs/eval/09_final_eval_round2.json",
+      "size_bytes": 164823,
+      "sha256": "f4d4e31393d1fe2dcb59ad6a133f39af2a26ea6d3643de2e33335842b1e7978e"
+    },
+    {
+      "path": "outputs/eval/10_mini_kd.json",
+      "size_bytes": 170,
+      "sha256": "404a1674ef9e1c679e42299f599b85ebaa0101b2f0a031bde930422c5806c0c6"
+    },
+    {
+      "path": "outputs/eval/10_mini_kd_round2.json",
+      "size_bytes": 308,
+      "sha256": "44c24161a0acd42fa9f133f0d81624c528ac2abaf1ef3f356c3d1f6aa74da41e"
+    },
+    {
+      "path": "outputs/eval/12_report_pre_kd.json",
+      "size_bytes": 155917,
+      "sha256": "ca42efd634dbe63f851032011a194dcd1a826b699e871cd3656861b534d22a87"
+    },
+    {
+      "path": "outputs/eval/12_report_kd15m.json",
+      "size_bytes": 155925,
+      "sha256": "2a33ebc9368d2dd305f67cb49b43bf290688eb78bf338e8bd32da7bfbfc259ff"
+    },
+    {
+      "path": "outputs/eval/12_report_final35m.json",
+      "size_bytes": 155963,
+      "sha256": "ebf07ac4cd8e5d15a4b10f9cfc02cf092511f0d26b4caaa6fbf32d9b7a55365c"
+    },
+    {
+      "path": "outputs/eval/12_report_reference4b_native.json",
+      "size_bytes": 155881,
+      "sha256": "aed7b6d5431799aa5c2f6ad6ab93da71325e3ea9ba503cf695585515360eb4f8"
+    },
+    {
+      "path": "outputs/eval/12_report_final35m_efficiency.json",
+      "size_bytes": 1232,
+      "sha256": "cbbacff906a886f9a1b9bbbbc40ad6bc0eebcb4fbe96c618f33e73b24c8bb71e"
+    }
+  ],
+  "generated_artifacts": [
+    {
+      "path": "outputs/report/candidate_table1.csv",
+      "size_bytes": 8572,
+      "sha256": "8d4af5f20d3df2d27e60ccb6c86956e4eb4a1445626ecc93ead6bccb56c3a933"
+    },
+    {
+      "path": "outputs/report/candidate_table1.json",
+      "size_bytes": 21379,
+      "sha256": "fbec0923c91481147cae3c358588961bc69927591492b6799524cf745e0a44f9"
+    },
+    {
+      "path": "outputs/report/benchmark_compact.csv",
+      "size_bytes": 7021,
+      "sha256": "53b0ea059e9811ca7ca8994601ec10563e2500673ae702a433adf7fc6b9ec9e1"
+    },
+    {
+      "path": "outputs/report/benchmark_compact.json",
+      "size_bytes": 26833,
+      "sha256": "002567b80e583d1227cc93342c6ea01b8b1a42d237c98f1abbb4f14f52de7e15"
+    },
+    {
+      "path": "outputs/report/kd_recovery.csv",
+      "size_bytes": 2385,
+      "sha256": "284f77f1bd94741747cb0f4c335d300478acbeb3ca18ce648fa127a7e766e6be"
+    },
+    {
+      "path": "outputs/report/kd_recovery.json",
+      "size_bytes": 4682,
+      "sha256": "88b480a6abb78650999c30081cb150c362a05a809383db03eaec4fb8ff991200"
+    },
+    {
+      "path": "outputs/report/efficiency.csv",
+      "size_bytes": 3518,
+      "sha256": "d3cbd17eb04f9cd58aede04bf03aa321a4f40e290e8946b0708f00268d44ce9a"
+    },
+    {
+      "path": "outputs/report/efficiency.json",
+      "size_bytes": 8800,
+      "sha256": "e869b06e8d95bdbcbc4cc6ed4ba66519b03be72a5a88600ad813cfc71ca27219"
+    },
+    {
+      "path": "outputs/eval/09_final_eval_compact.json",
+      "size_bytes": 493734,
+      "sha256": "1c12e9a3dd8292d6eb794266062603e09422eae3181facf393c6cbb3a79cec0b"
+    }
+  ],
+  "slurm_jobs": [
+    {
+      "job_id_raw": "1280917",
+      "job_id": "1280917",
+      "job_name": "minitron_baseline",
+      "state": "COMPLETED",
+      "elapsed": "00:50:03",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1280919",
+      "job_id": "1280919",
+      "job_name": "minitron_overnight",
+      "state": "TIMEOUT",
+      "elapsed": "1-00:00:13",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": "Timed out after stages 02-06 had produced valid artifacts."
+    },
+    {
+      "job_id_raw": "1285584",
+      "job_id": "1285584",
+      "job_name": "minitron_kd_smoke",
+      "state": "COMPLETED",
+      "elapsed": "02:35:36",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1285595",
+      "job_id": "1285594_0",
+      "job_name": "minitron_kd_train",
+      "state": "COMPLETED",
+      "elapsed": "19:17:50",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1285596",
+      "job_id": "1285594_1",
+      "job_name": "minitron_kd_train",
+      "state": "COMPLETED",
+      "elapsed": "19:07:33",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1285594",
+      "job_id": "1285594_2",
+      "job_name": "minitron_kd_train",
+      "state": "FAILED",
+      "elapsed": "19:12:06",
+      "time_limit": "1-00:00:00",
+      "exit_code": "6:0",
+      "node": "palamut1",
+      "note": "Post-Python exit 6; cand-006 training artifact and checkpoint are valid."
+    },
+    {
+      "job_id_raw": "1286114",
+      "job_id": "1286114",
+      "job_name": "minitron_final_eval",
+      "state": "COMPLETED",
+      "elapsed": "07:03:43",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1286115",
+      "job_id": "1286115",
+      "job_name": "minitron_mini_kd",
+      "state": "COMPLETED",
+      "elapsed": "12:45:30",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1286271",
+      "job_id": "1286270_0",
+      "job_name": "minitron_kd_round2",
+      "state": "COMPLETED",
+      "elapsed": "19:11:14",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1286272",
+      "job_id": "1286270_1",
+      "job_name": "minitron_kd_round2",
+      "state": "COMPLETED",
+      "elapsed": "19:19:22",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1286270",
+      "job_id": "1286270_2",
+      "job_name": "minitron_kd_round2",
+      "state": "FAILED",
+      "elapsed": "19:16:22",
+      "time_limit": "1-00:00:00",
+      "exit_code": "6:0",
+      "node": "palamut1",
+      "note": "Post-Python exit 6; cand-006 round-2 artifact and checkpoint are valid."
+    },
+    {
+      "job_id_raw": "1287432",
+      "job_id": "1287432",
+      "job_name": "minitron_mini_kd_r2",
+      "state": "COMPLETED",
+      "elapsed": "12:55:10",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1287434",
+      "job_id": "1287433_0",
+      "job_name": "minitron_eval_followup",
+      "state": "COMPLETED",
+      "elapsed": "02:57:55",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1287433",
+      "job_id": "1287433_1",
+      "job_name": "minitron_eval_followup",
+      "state": "COMPLETED",
+      "elapsed": "02:57:55",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": null
+    },
+    {
+      "job_id_raw": "1287577",
+      "job_id": "1287577",
+      "job_name": "table4-parent",
+      "state": "CANCELLED by 14235",
+      "elapsed": "23:34:54",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": "Cancelled after preserving completed zero-shot and 5-shot MMLU groups."
+    },
+    {
+      "job_id_raw": "1287578",
+      "job_id": "1287578",
+      "job_name": "table4-reference",
+      "state": "FAILED",
+      "elapsed": "07:59:44",
+      "time_limit": "1-00:00:00",
+      "exit_code": "1:0",
+      "node": "palamut1",
+      "note": "Official-4B mixed-shot run failed on 5-shot MMLU CUDA OOM; zero-shot group preserved."
+    },
+    {
+      "job_id_raw": "1287579",
+      "job_id": "1287579",
+      "job_name": "table4-pruned",
+      "state": "CANCELLED by 14235",
+      "elapsed": "00:00:00",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "None assigned",
+      "note": "Cancelled while pending; no compute allocation."
+    },
+    {
+      "job_id_raw": "1287580",
+      "job_id": "1287580",
+      "job_name": "table4-final",
+      "state": "CANCELLED by 14235",
+      "elapsed": "11:39:41",
+      "time_limit": "1-00:00:00",
+      "exit_code": "0:0",
+      "node": "palamut1",
+      "note": "Cancelled after preserving completed zero-shot and 5-shot MMLU groups."
+    },
+    {
+      "job_id_raw": "1290827",
+      "job_id": "1290826_0",
+      "job_name": "minitron_report",
+      "state": "COMPLETED",
+      "elapsed": "02:58:43",
+      "time_limit": "12:00:00",
+      "exit_code": "0:0",
+      "node": "palamut2",
+      "note": null
+    },
+    {
+      "job_id_raw": "1290828",
+      "job_id": "1290826_1",
+      "job_name": "minitron_report",
+      "state": "COMPLETED",
+      "elapsed": "02:58:43",
+      "time_limit": "12:00:00",
+      "exit_code": "0:0",
+      "node": "palamut2",
+      "note": null
+    },
+    {
+      "job_id_raw": "1290829",
+      "job_id": "1290826_2",
+      "job_name": "minitron_report",
+      "state": "COMPLETED",
+      "elapsed": "02:58:43",
+      "time_limit": "12:00:00",
+      "exit_code": "0:0",
+      "node": "palamut2",
+      "note": null
+    },
+    {
+      "job_id_raw": "1290830",
+      "job_id": "1290826_3",
+      "job_name": "minitron_report",
+      "state": "COMPLETED",
+      "elapsed": "00:55:37",
+      "time_limit": "12:00:00",
+      "exit_code": "0:0",
+      "node": "palamut2",
+      "note": null
+    },
+    {
+      "job_id_raw": "1290826",
+      "job_id": "1290826_4",
+      "job_name": "minitron_report",
+      "state": "COMPLETED",
+      "elapsed": "00:34:57",
+      "time_limit": "12:00:00",
+      "exit_code": "0:0",
+      "node": "palamut2",
+      "note": null
+    }
+  ],
+  "execution_lineage": [
+    {
+      "job_id": "1280917",
+      "stage": "01",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/01_baseline.json"
+      ]
+    },
+    {
+      "job_id": "1280919",
+      "stage": "02-06",
+      "checkpoints": [
+        "outputs/checkpoints/anchor-2",
+        "outputs/checkpoints/cand-000",
+        "outputs/checkpoints/cand-001",
+        "outputs/checkpoints/cand-002",
+        "outputs/checkpoints/cand-003",
+        "outputs/checkpoints/cand-004",
+        "outputs/checkpoints/cand-005",
+        "outputs/checkpoints/cand-006",
+        "outputs/checkpoints/cand-007",
+        "outputs/checkpoints/cand-008",
+        "outputs/checkpoints/cand-009",
+        "outputs/checkpoints/cand-010",
+        "outputs/checkpoints/cand-011",
+        "outputs/checkpoints/cand-012",
+        "outputs/checkpoints/cand-013",
+        "outputs/checkpoints/cand-014",
+        "outputs/checkpoints/cand-015",
+        "outputs/checkpoints/cand-016",
+        "outputs/checkpoints/cand-017",
+        "outputs/checkpoints/cand-018"
+      ],
+      "artifacts": [
+        "outputs/scores/importance_scores.pt",
+        "outputs/candidates/candidates.json",
+        "outputs/eval/05_candidates.json",
+        "outputs/eval/06_top3.json"
+      ]
+    },
+    {
+      "job_id": "1285584",
+      "stage": "07",
+      "checkpoints": [
+        "outputs/checkpoints/cand-009-kd-smoke"
+      ],
+      "artifacts": [
+        "outputs/eval/07_kd_smoke.json"
+      ]
+    },
+    {
+      "job_id": "1285594_0",
+      "stage": "08",
+      "checkpoints": [
+        "outputs/checkpoints/cand-009-kd"
+      ],
+      "artifacts": [
+        "outputs/eval/08_kd_results.cand00.json"
+      ]
+    },
+    {
+      "job_id": "1285594_1",
+      "stage": "08",
+      "checkpoints": [
+        "outputs/checkpoints/cand-016-kd"
+      ],
+      "artifacts": [
+        "outputs/eval/08_kd_results.cand01.json"
+      ]
+    },
+    {
+      "job_id": "1285594_2",
+      "stage": "08",
+      "checkpoints": [
+        "outputs/checkpoints/cand-006-kd"
+      ],
+      "artifacts": [
+        "outputs/eval/08_kd_results.cand02.json"
+      ]
+    },
+    {
+      "job_id": "1286114",
+      "stage": "09",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/09_final_eval.json"
+      ]
+    },
+    {
+      "job_id": "1286115",
+      "stage": "10",
+      "checkpoints": [
+        "outputs/checkpoints/cand-016-mini-final"
+      ],
+      "artifacts": [
+        "outputs/eval/10_mini_kd.json"
+      ]
+    },
+    {
+      "job_id": "1286270_0",
+      "stage": "08b",
+      "checkpoints": [
+        "outputs/checkpoints/cand-009-kd2"
+      ],
+      "artifacts": [
+        "outputs/eval/08_kd_results_round2.cand00.json"
+      ]
+    },
+    {
+      "job_id": "1286270_1",
+      "stage": "08b",
+      "checkpoints": [
+        "outputs/checkpoints/cand-016-kd2"
+      ],
+      "artifacts": [
+        "outputs/eval/08_kd_results_round2.cand01.json"
+      ]
+    },
+    {
+      "job_id": "1286270_2",
+      "stage": "08b",
+      "checkpoints": [
+        "outputs/checkpoints/cand-006-kd2"
+      ],
+      "artifacts": [
+        "outputs/eval/08_kd_results_round2.cand02.json"
+      ]
+    },
+    {
+      "job_id": "1287432",
+      "stage": "10b",
+      "checkpoints": [
+        "outputs/checkpoints/cand-016-mini-final2"
+      ],
+      "artifacts": [
+        "outputs/eval/10_mini_kd_round2.json"
+      ]
+    },
+    {
+      "job_id": "1287433_0",
+      "stage": "09b",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/09_final_eval_round2.json"
+      ]
+    },
+    {
+      "job_id": "1287433_1",
+      "stage": "09c",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/09_final_eval_mini_kd.json"
+      ]
+    },
+    {
+      "job_id": "1287577",
+      "stage": "11-parent-partial",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/11_table4_parent.partial-preserved-20260606-224106.json"
+      ]
+    },
+    {
+      "job_id": "1287578",
+      "stage": "11-reference-partial",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/11_table4_reference4b.json"
+      ]
+    },
+    {
+      "job_id": "1287579",
+      "stage": "11-pruned-cancelled-pending",
+      "checkpoints": [],
+      "artifacts": []
+    },
+    {
+      "job_id": "1287580",
+      "stage": "11-final-partial",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/11_table4_final.partial-preserved-20260606-224106.json"
+      ]
+    },
+    {
+      "job_id": "1290826_0",
+      "stage": "12a",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/12_report_pre_kd.json"
+      ]
+    },
+    {
+      "job_id": "1290826_1",
+      "stage": "12a",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/12_report_kd15m.json"
+      ]
+    },
+    {
+      "job_id": "1290826_2",
+      "stage": "12a",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/12_report_final35m.json"
+      ]
+    },
+    {
+      "job_id": "1290826_3",
+      "stage": "12b",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/12_report_reference4b_native.json"
+      ]
+    },
+    {
+      "job_id": "1290826_4",
+      "stage": "12c",
+      "checkpoints": [],
+      "artifacts": [
+        "outputs/eval/12_report_final35m_efficiency.json"
+      ]
+    }
+  ],
+  "checkpoints": [
+    {
+      "checkpoint": "outputs/checkpoints/anchor-2",
+      "candidate_id": "anchor-2",
+      "config_sha256": "30f5741d91af05aceb4698acfaf5b1a64d7367f8a0e7d59fdb1005fb68632866",
+      "model_file": "outputs/checkpoints/anchor-2/model.safetensors",
+      "model_size_bytes": 8981137040,
+      "model_mtime_epoch": 1780254897.0,
+      "effective_checkpoint_param_count": 4490551296,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-000",
+      "candidate_id": "cand-000",
+      "config_sha256": "ae22f10bcc44fae8ad42e4e4ee1e8e7e3130835a5c57f4d703c597ebb10715ee",
+      "model_file": "outputs/checkpoints/cand-000/model.safetensors",
+      "model_size_bytes": 9483956328,
+      "model_mtime_epoch": 1780254909.0,
+      "effective_checkpoint_param_count": 4741960960,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-001",
+      "candidate_id": "cand-001",
+      "config_sha256": "3da50676018d635b69fe74241f5c3678ee0c8e51fb17122f8cdea46eca95f1c9",
+      "model_file": "outputs/checkpoints/cand-001/model.safetensors",
+      "model_size_bytes": 9207629456,
+      "model_mtime_epoch": 1780254923.0,
+      "effective_checkpoint_param_count": 4603797504,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-002",
+      "candidate_id": "cand-002",
+      "config_sha256": "3c9985601dc1a8ab399d8d1f2db4177978c02b7c2492cb98e569bc547ac0744d",
+      "model_file": "outputs/checkpoints/cand-002/model.safetensors",
+      "model_size_bytes": 9207629456,
+      "model_mtime_epoch": 1780254936.0,
+      "effective_checkpoint_param_count": 4603797504,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-003",
+      "candidate_id": "cand-003",
+      "config_sha256": "55b85a7fa4f99ffa61dfbd6df69062758614e7fbd4122e028d82a4a6d652794e",
+      "model_file": "outputs/checkpoints/cand-003/model.safetensors",
+      "model_size_bytes": 9434121872,
+      "model_mtime_epoch": 1780254950.0,
+      "effective_checkpoint_param_count": 4717043712,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-004",
+      "candidate_id": "cand-004",
+      "config_sha256": "92cf693eced954fadd2fac3c24e4b54834842fc38e10fbe8de23ad3b09424895",
+      "model_file": "outputs/checkpoints/cand-004/model.safetensors",
+      "model_size_bytes": 8981137040,
+      "model_mtime_epoch": 1780254962.0,
+      "effective_checkpoint_param_count": 4490551296,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-005",
+      "candidate_id": "cand-005",
+      "config_sha256": "00dcd62da85b588ef69e444c51dd5a3f1782d4a25d8365a1e0a0e398739e8b3e",
+      "model_file": "outputs/checkpoints/cand-005/model.safetensors",
+      "model_size_bytes": 8754644576,
+      "model_mtime_epoch": 1780254977.0,
+      "effective_checkpoint_param_count": 4377305088,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-006",
+      "candidate_id": "cand-006",
+      "config_sha256": "fba3308ff7b143e651ed05d2d3157819818abd9caef24d3ef8808fe517e9bdbb",
+      "model_file": "outputs/checkpoints/cand-006/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780254994.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-006-kd",
+      "candidate_id": "cand-006",
+      "config_sha256": "fba3308ff7b143e651ed05d2d3157819818abd9caef24d3ef8808fe517e9bdbb",
+      "model_file": "outputs/checkpoints/cand-006-kd/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780580439.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-006-kd2",
+      "candidate_id": "cand-006",
+      "config_sha256": "fba3308ff7b143e651ed05d2d3157819818abd9caef24d3ef8808fe517e9bdbb",
+      "model_file": "outputs/checkpoints/cand-006-kd2/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780672703.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-007",
+      "candidate_id": "cand-007",
+      "config_sha256": "95abde38ad16c37866ca350689459b235255f6b40e10a69214f823fb37130417",
+      "model_file": "outputs/checkpoints/cand-007/model.safetensors",
+      "model_size_bytes": 9207629456,
+      "model_mtime_epoch": 1780255012.0,
+      "effective_checkpoint_param_count": 4603797504,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-008",
+      "candidate_id": "cand-008",
+      "config_sha256": "92d5f19ef3576bd7fc736d39211e37b6a34406960793cc723e6cb7c24f041594",
+      "model_file": "outputs/checkpoints/cand-008/model.safetensors",
+      "model_size_bytes": 9974689944,
+      "model_mtime_epoch": 1780255027.0,
+      "effective_checkpoint_param_count": 4987327744,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-009",
+      "candidate_id": "cand-009",
+      "config_sha256": "61c1928438bd693f5cb6a7efb75229d65a0cce4f66e97940632edde7496d2b07",
+      "model_file": "outputs/checkpoints/cand-009/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780255039.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-009-kd",
+      "candidate_id": "cand-009",
+      "config_sha256": "61c1928438bd693f5cb6a7efb75229d65a0cce4f66e97940632edde7496d2b07",
+      "model_file": "outputs/checkpoints/cand-009-kd/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780580784.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-009-kd-smoke",
+      "candidate_id": "cand-009",
+      "config_sha256": "61c1928438bd693f5cb6a7efb75229d65a0cce4f66e97940632edde7496d2b07",
+      "model_file": "outputs/checkpoints/cand-009-kd-smoke/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780519017.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-009-kd2",
+      "candidate_id": "cand-009",
+      "config_sha256": "61c1928438bd693f5cb6a7efb75229d65a0cce4f66e97940632edde7496d2b07",
+      "model_file": "outputs/checkpoints/cand-009-kd2/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780672380.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-010",
+      "candidate_id": "cand-010",
+      "config_sha256": "f4f15d030d6c50bd324d99a1e20f1d34f704a2d3358d109fbac9b298a71310fe",
+      "model_file": "outputs/checkpoints/cand-010/model.safetensors",
+      "model_size_bytes": 9887106704,
+      "model_mtime_epoch": 1780255054.0,
+      "effective_checkpoint_param_count": 4943536128,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-011",
+      "candidate_id": "cand-011",
+      "config_sha256": "0d4456f28a39dd53531633997832f647d519582a394778c9b0f84d07f604db2e",
+      "model_file": "outputs/checkpoints/cand-011/model.safetensors",
+      "model_size_bytes": 9660614288,
+      "model_mtime_epoch": 1780255068.0,
+      "effective_checkpoint_param_count": 4830289920,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-012",
+      "candidate_id": "cand-012",
+      "config_sha256": "28f55092ee3ed786db816401aa442ac9c1d1df8295ca58d86b12f55b46c0ccf9",
+      "model_file": "outputs/checkpoints/cand-012/model.safetensors",
+      "model_size_bytes": 9434121872,
+      "model_mtime_epoch": 1780255085.0,
+      "effective_checkpoint_param_count": 4717043712,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-013",
+      "candidate_id": "cand-013",
+      "config_sha256": "681ffa4f119d095019509cedd135578805884168c31f84a0432ab4aa585e0f26",
+      "model_file": "outputs/checkpoints/cand-013/model.safetensors",
+      "model_size_bytes": 9434121872,
+      "model_mtime_epoch": 1780255105.0,
+      "effective_checkpoint_param_count": 4717043712,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-014",
+      "candidate_id": "cand-014",
+      "config_sha256": "af3215e84b5f9b454498d911811846eade7d2027900a90bfeb9ca66c9507e660",
+      "model_file": "outputs/checkpoints/cand-014/model.safetensors",
+      "model_size_bytes": 9660614288,
+      "model_mtime_epoch": 1780255125.0,
+      "effective_checkpoint_param_count": 4830289920,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-015",
+      "candidate_id": "cand-015",
+      "config_sha256": "db026024d8da03a5eeb55b67d5e7c24cb5f14efa14e530634a0fae6f917ffeaf",
+      "model_file": "outputs/checkpoints/cand-015/model.safetensors",
+      "model_size_bytes": 8981137040,
+      "model_mtime_epoch": 1780255143.0,
+      "effective_checkpoint_param_count": 4490551296,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-016",
+      "candidate_id": "cand-016",
+      "config_sha256": "38081b2707141d4d36cef6b5e2d97bc95ad12b42f4d0022b4b4d79a578bf00e9",
+      "model_file": "outputs/checkpoints/cand-016/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780255160.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-016-kd",
+      "candidate_id": "cand-016",
+      "config_sha256": "38081b2707141d4d36cef6b5e2d97bc95ad12b42f4d0022b4b4d79a578bf00e9",
+      "model_file": "outputs/checkpoints/cand-016-kd/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780580157.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-016-kd2",
+      "candidate_id": "cand-016",
+      "config_sha256": "38081b2707141d4d36cef6b5e2d97bc95ad12b42f4d0022b4b4d79a578bf00e9",
+      "model_file": "outputs/checkpoints/cand-016-kd2/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780672883.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-016-mini-final",
+      "candidate_id": "cand-016",
+      "config_sha256": "38081b2707141d4d36cef6b5e2d97bc95ad12b42f4d0022b4b4d79a578bf00e9",
+      "model_file": "outputs/checkpoints/cand-016-mini-final/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780642336.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-016-mini-final2",
+      "candidate_id": "cand-016",
+      "config_sha256": "38081b2707141d4d36cef6b5e2d97bc95ad12b42f4d0022b4b4d79a578bf00e9",
+      "model_file": "outputs/checkpoints/cand-016-mini-final2/model.safetensors",
+      "model_size_bytes": 9729323160,
+      "model_mtime_epoch": 1780732868.0,
+      "effective_checkpoint_param_count": 4864644352,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-017",
+      "candidate_id": "cand-017",
+      "config_sha256": "987482181d99e802885c36a66cd358a4c2f015237f13fccd28b364a05038392e",
+      "model_file": "outputs/checkpoints/cand-017/model.safetensors",
+      "model_size_bytes": 9434121872,
+      "model_mtime_epoch": 1780255182.0,
+      "effective_checkpoint_param_count": 4717043712,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    },
+    {
+      "checkpoint": "outputs/checkpoints/cand-018",
+      "candidate_id": "cand-018",
+      "config_sha256": "f49199ecdf87ddefde45ab6c8ce53838c3f6617bdd9aaa79acf18eb0b0285a1c",
+      "model_file": "outputs/checkpoints/cand-018/model.safetensors",
+      "model_size_bytes": 8981137040,
+      "model_mtime_epoch": 1780255195.0,
+      "effective_checkpoint_param_count": 4490551296,
+      "weights_sha256": null,
+      "weights_sha256_note": "Not computed: checkpoint identity is recorded by exact path, size, mtime, config hash, and tensor parameter count."
+    }
+  ],
+  "limitations": [
+    "Stage-04 Mamba structural pruning was not applied; effective checkpoints retain parent Mamba dimensions.",
+    "Primary benchmark protocol is zero-shot, including MMLU.",
+    "Stage-11 mixed-shot results are partial diagnostics and are not merged into benchmark_compact.",
+    "Parent stage-01 LM loss is null; final35 and candidate LM-loss values come from their completed artifacts."
+  ]
+}

@@ -1,3 +1,0 @@
-[Wed Jun  3 06:54:18 PM +03 2026] Job started on palamut1
-[Wed Jun  3 06:54:19 PM +03 2026] >>> Running: python scripts/07_kd_smoke.py
-2026-06-03 18:55:08 [INFO] kd-smoke: disabled fused Mamba kernels for 24 module(s) in KD student

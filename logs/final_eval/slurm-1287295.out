@@ -1,0 +1,5 @@
+[Fri Jun  5 09:01:31 PM +03 2026] Job started on palamut3
+[Fri Jun  5 09:01:32 PM +03 2026] >>> Running: python scripts/09b_final_eval_from_results.py --mini-kd-json /tmp/minitron_final_eval_mini_1287295/10_mini_kd.json --output /arf/scratch/skantar/MinitronSSM/outputs/eval/09_final_eval_mini_kd.json --skip-parent --skip-pruned --skip-kd --harness-batch-size 1
+2026-06-05 21:01:38 [INFO] final-eval-results: loaded parent on CPU as architecture template only
+2026-06-05 21:01:38 [INFO] final-eval-results: building mini_final_kd from outputs/checkpoints/cand-016-mini-final
+2026-06-05 21:02:13 [INFO] final-eval-results: disabled fused Mamba kernels for 24 module(s)

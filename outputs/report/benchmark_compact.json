@@ -1,0 +1,753 @@
+{
+  "schema_version": 1,
+  "protocol": "lm-eval stable seven-task suite, zero-shot",
+  "primary_metrics": {
+    "arc_challenge": "acc_norm",
+    "arc_easy": "acc_norm",
+    "hellaswag": "acc_norm",
+    "piqa": "acc_norm",
+    "winogrande": "acc",
+    "openbookqa": "acc_norm",
+    "mmlu": "acc"
+  },
+  "models": [
+    {
+      "model_id": "parent-8b",
+      "label": "Nemotron-H 8B parent",
+      "checkpoint": "nvidia/Nemotron-H-8B-Base-8K",
+      "lineage_kd_tokens": null,
+      "source_artifact": "outputs/eval/09_final_eval.json",
+      "protocol": "lm-eval stable seven-task suite, zero-shot",
+      "kernel_mode": "native",
+      "mean_primary_accuracy": 0.7153731661553125,
+      "metrics": {
+        "arc_challenge": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.5972696245733788,
+          "primary_stderr": 0.01433223630679015,
+          "acc": 0.5648464163822525,
+          "acc_stderr": 0.014487986197186045,
+          "acc_norm": 0.5972696245733788,
+          "acc_norm_stderr": 0.01433223630679015,
+          "sample_len": 1172
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.8303872053872053,
+          "primary_stderr": 0.007700835074784076,
+          "acc": 0.8438552188552189,
+          "acc_stderr": 0.007448449883694362,
+          "acc_norm": 0.8303872053872053,
+          "acc_norm_stderr": 0.007700835074784076,
+          "sample_len": 2376
+        },
+        "hellaswag": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.809699263095001,
+          "primary_stderr": 0.00391736125410187,
+          "acc": 0.6121290579565823,
+          "acc_stderr": 0.0048626905948156935,
+          "acc_norm": 0.809699263095001,
+          "acc_norm_stderr": 0.00391736125410187,
+          "sample_len": 10042
+        },
+        "piqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.8215451577801959,
+          "primary_stderr": 0.008933575463062074,
+          "acc": 0.8193688792165397,
+          "acc_stderr": 0.008975971037338056,
+          "acc_norm": 0.8215451577801959,
+          "acc_norm_stderr": 0.008933575463062074,
+          "sample_len": 1838
+        },
+        "winogrande": {
+          "primary_metric": "acc",
+          "primary_value": 0.7600631412786109,
+          "primary_stderr": 0.01200207862948574,
+          "acc": 0.7600631412786109,
+          "acc_stderr": 0.01200207862948574,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 1267
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.476,
+          "primary_stderr": 0.0223572738810164,
+          "acc": 0.346,
+          "acc_stderr": 0.021294951277234637,
+          "acc_norm": 0.476,
+          "acc_norm_stderr": 0.0223572738810164,
+          "sample_len": 500
+        },
+        "mmlu": {
+          "primary_metric": "acc",
+          "primary_value": 0.7126477709727959,
+          "primary_stderr": 0.003648860554167977,
+          "acc": 0.7126477709727959,
+          "acc_stderr": 0.003648860554167977,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 14042
+        }
+      }
+    },
+    {
+      "model_id": "cand-009-pre-kd",
+      "label": "cand-009 pre-KD",
+      "checkpoint": "outputs/checkpoints/cand-009",
+      "lineage_kd_tokens": 0,
+      "source_artifact": "outputs/eval/09_final_eval.json",
+      "protocol": "lm-eval stable seven-task suite, zero-shot",
+      "kernel_mode": "safe_torch",
+      "mean_primary_accuracy": 0.32656204294586366,
+      "metrics": {
+        "arc_challenge": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.26535836177474403,
+          "primary_stderr": 0.012902554762313964,
+          "acc": 0.23208191126279865,
+          "acc_stderr": 0.012336718284948854,
+          "acc_norm": 0.26535836177474403,
+          "acc_norm_stderr": 0.012902554762313964,
+          "sample_len": 1172
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.26557239057239057,
+          "primary_stderr": 0.009062210626971845,
+          "acc": 0.25336700336700335,
+          "acc_stderr": 0.008924765424529265,
+          "acc_norm": 0.26557239057239057,
+          "acc_norm_stderr": 0.009062210626971845,
+          "sample_len": 2376
+        },
+        "hellaswag": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.2597092212706632,
+          "primary_stderr": 0.004375788991216849,
+          "acc": 0.25413264289982074,
+          "acc_stderr": 0.004344827546976561,
+          "acc_norm": 0.2597092212706632,
+          "acc_norm_stderr": 0.004375788991216849,
+          "sample_len": 10042
+        },
+        "piqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.4956474428726877,
+          "primary_stderr": 0.011665382144642389,
+          "acc": 0.4923830250272035,
+          "acc_stderr": 0.011664470424044978,
+          "acc_norm": 0.4956474428726877,
+          "acc_norm_stderr": 0.011665382144642389,
+          "sample_len": 1838
+        },
+        "winogrande": {
+          "primary_metric": "acc",
+          "primary_value": 0.5059194948697711,
+          "primary_stderr": 0.01405150083848581,
+          "acc": 0.5059194948697711,
+          "acc_stderr": 0.01405150083848581,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 1267
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.26,
+          "primary_stderr": 0.01963596552972551,
+          "acc": 0.138,
+          "acc_stderr": 0.015439843831953449,
+          "acc_norm": 0.26,
+          "acc_norm_stderr": 0.01963596552972551,
+          "sample_len": 500
+        },
+        "mmlu": {
+          "primary_metric": "acc",
+          "primary_value": 0.23372738926078906,
+          "primary_stderr": 0.003568863530013216,
+          "acc": 0.23372738926078906,
+          "acc_stderr": 0.003568863530013216,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 14042
+        }
+      }
+    },
+    {
+      "model_id": "cand-009-kd15m",
+      "label": "cand-009 KD 15M",
+      "checkpoint": "outputs/checkpoints/cand-009-kd",
+      "lineage_kd_tokens": 15000576,
+      "source_artifact": "outputs/eval/09_final_eval.json",
+      "protocol": "lm-eval stable seven-task suite, zero-shot",
+      "kernel_mode": "safe_torch",
+      "mean_primary_accuracy": 0.4288905515320586,
+      "metrics": {
+        "arc_challenge": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.28754266211604096,
+          "primary_stderr": 0.01322671905626613,
+          "acc": 0.26109215017064846,
+          "acc_stderr": 0.012835523909473835,
+          "acc_norm": 0.28754266211604096,
+          "acc_norm_stderr": 0.01322671905626613,
+          "sample_len": 1172
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.5016835016835017,
+          "primary_stderr": 0.010259725364582776,
+          "acc": 0.5631313131313131,
+          "acc_stderr": 0.010177672928157694,
+          "acc_norm": 0.5016835016835017,
+          "acc_norm_stderr": 0.010259725364582776,
+          "sample_len": 2376
+        },
+        "hellaswag": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.4567815176259709,
+          "primary_stderr": 0.0049711062650465475,
+          "acc": 0.3646683927504481,
+          "acc_stderr": 0.004803533333364226,
+          "acc_norm": 0.4567815176259709,
+          "acc_norm_stderr": 0.0049711062650465475,
+          "sample_len": 10042
+        },
+        "piqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.6626768226332971,
+          "primary_stderr": 0.0110311147850597,
+          "acc": 0.6653971708378672,
+          "acc_stderr": 0.011009071725162505,
+          "acc_norm": 0.6626768226332971,
+          "acc_norm_stderr": 0.0110311147850597,
+          "sample_len": 1838
+        },
+        "winogrande": {
+          "primary_metric": "acc",
+          "primary_value": 0.5461720599842147,
+          "primary_stderr": 0.013992441563707065,
+          "acc": 0.5461720599842147,
+          "acc_stderr": 0.013992441563707065,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 1267
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.316,
+          "primary_stderr": 0.020812359515855864,
+          "acc": 0.206,
+          "acc_stderr": 0.018104794037333564,
+          "acc_norm": 0.316,
+          "acc_norm_stderr": 0.020812359515855864,
+          "sample_len": 500
+        },
+        "mmlu": {
+          "primary_metric": "acc",
+          "primary_value": 0.23137729668138443,
+          "primary_stderr": 0.003554232526851674,
+          "acc": 0.23137729668138443,
+          "acc_stderr": 0.003554232526851674,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 14042
+        }
+      }
+    },
+    {
+      "model_id": "cand-016-pre-kd",
+      "label": "cand-016 pre-KD",
+      "checkpoint": "/arf/scratch/skantar/MinitronSSM/outputs/checkpoints/cand-016",
+      "lineage_kd_tokens": 0,
+      "source_artifact": "outputs/eval/12_report_pre_kd.json",
+      "protocol": "lm-eval stable seven-task suite, zero-shot",
+      "kernel_mode": "safe_torch",
+      "mean_primary_accuracy": 0.3256063172990607,
+      "metrics": {
+        "arc_challenge": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.2568259385665529,
+          "primary_stderr": 0.0127669237941168,
+          "acc": 0.22610921501706485,
+          "acc_stderr": 0.012224202097063276,
+          "acc_norm": 0.2568259385665529,
+          "acc_norm_stderr": 0.0127669237941168,
+          "sample_len": 1172
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.2617845117845118,
+          "primary_stderr": 0.009020523527210174,
+          "acc": 0.24831649831649832,
+          "acc_stderr": 0.008865199020660967,
+          "acc_norm": 0.2617845117845118,
+          "acc_norm_stderr": 0.009020523527210174,
+          "sample_len": 2376
+        },
+        "hellaswag": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.2588129854610635,
+          "primary_stderr": 0.004370875625259009,
+          "acc": 0.2557259510057757,
+          "acc_stderr": 0.004353768730644527,
+          "acc_norm": 0.2588129854610635,
+          "acc_norm_stderr": 0.004370875625259009,
+          "sample_len": 10042
+        },
+        "piqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.499455930359086,
+          "primary_stderr": 0.011665817258899173,
+          "acc": 0.5043525571273123,
+          "acc_stderr": 0.011665382144642385,
+          "acc_norm": 0.499455930359086,
+          "acc_norm_stderr": 0.011665817258899173,
+          "sample_len": 1838
+        },
+        "winogrande": {
+          "primary_metric": "acc",
+          "primary_value": 0.5074980268350434,
+          "primary_stderr": 0.014050905521228577,
+          "acc": 0.5074980268350434,
+          "acc_stderr": 0.014050905521228577,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 1267
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.26,
+          "primary_stderr": 0.019635965529725512,
+          "acc": 0.136,
+          "acc_stderr": 0.015345323649758276,
+          "acc_norm": 0.26,
+          "acc_norm_stderr": 0.019635965529725512,
+          "sample_len": 500
+        },
+        "mmlu": {
+          "primary_metric": "acc",
+          "primary_value": 0.23486682808716708,
+          "primary_stderr": 0.003575340982341812,
+          "acc": 0.23486682808716708,
+          "acc_stderr": 0.003575340982341812,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 14042
+        }
+      }
+    },
+    {
+      "model_id": "cand-016-kd15m",
+      "label": "cand-016 KD 15M",
+      "checkpoint": "/arf/scratch/skantar/MinitronSSM/outputs/checkpoints/cand-016-kd",
+      "lineage_kd_tokens": 15000576,
+      "source_artifact": "outputs/eval/12_report_kd15m.json",
+      "protocol": "lm-eval stable seven-task suite, zero-shot",
+      "kernel_mode": "safe_torch",
+      "mean_primary_accuracy": 0.43430442960455035,
+      "metrics": {
+        "arc_challenge": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.2977815699658703,
+          "primary_stderr": 0.013363080107244489,
+          "acc": 0.26706484641638223,
+          "acc_stderr": 0.012928933196496363,
+          "acc_norm": 0.2977815699658703,
+          "acc_norm_stderr": 0.013363080107244489,
+          "sample_len": 1172
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.5058922558922558,
+          "primary_stderr": 0.010259071083844221,
+          "acc": 0.563973063973064,
+          "acc_stderr": 0.010175459582759736,
+          "acc_norm": 0.5058922558922558,
+          "acc_norm_stderr": 0.010259071083844221,
+          "sample_len": 2376
+        },
+        "hellaswag": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.47241585341565423,
+          "primary_stderr": 0.004982182323923561,
+          "acc": 0.37512447719577774,
+          "acc_stderr": 0.004831655648489729,
+          "acc_norm": 0.47241585341565423,
+          "acc_norm_stderr": 0.004982182323923561,
+          "sample_len": 10042
+        },
+        "piqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.6643090315560392,
+          "primary_stderr": 0.011017938116656308,
+          "acc": 0.6692056583242655,
+          "acc_stderr": 0.010977520584714434,
+          "acc_norm": 0.6643090315560392,
+          "acc_norm_stderr": 0.011017938116656308,
+          "sample_len": 1838
+        },
+        "winogrande": {
+          "primary_metric": "acc",
+          "primary_value": 0.5595895816890292,
+          "primary_stderr": 0.01395233031191561,
+          "acc": 0.5595895816890292,
+          "acc_stderr": 0.01395233031191561,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 1267
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.302,
+          "primary_stderr": 0.02055326917420919,
+          "acc": 0.186,
+          "acc_stderr": 0.017418806780583957,
+          "acc_norm": 0.302,
+          "acc_norm_stderr": 0.02055326917420919,
+          "sample_len": 500
+        },
+        "mmlu": {
+          "primary_metric": "acc",
+          "primary_value": 0.23814271471300386,
+          "primary_stderr": 0.0035927144478461056,
+          "acc": 0.23814271471300386,
+          "acc_stderr": 0.0035927144478461056,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 14042
+        }
+      }
+    },
+    {
+      "model_id": "cand-016-mini25m",
+      "label": "cand-016 mini-final ~25M",
+      "checkpoint": "outputs/checkpoints/cand-016-mini-final",
+      "lineage_kd_tokens": 25000960,
+      "source_artifact": "outputs/eval/09_final_eval_mini_kd.json",
+      "protocol": "lm-eval stable seven-task suite, zero-shot",
+      "kernel_mode": "safe_torch",
+      "mean_primary_accuracy": 0.4415133664561702,
+      "metrics": {
+        "arc_challenge": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.3054607508532423,
+          "primary_stderr": 0.0134600804780025,
+          "acc": 0.28668941979522183,
+          "acc_stderr": 0.01321498632927479,
+          "acc_norm": 0.3054607508532423,
+          "acc_norm_stderr": 0.0134600804780025,
+          "sample_len": 1172
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.5252525252525253,
+          "primary_stderr": 0.010246690042583852,
+          "acc": 0.57996632996633,
+          "acc_stderr": 0.010127718838529325,
+          "acc_norm": 0.5252525252525253,
+          "acc_norm_stderr": 0.010246690042583852,
+          "sample_len": 2376
+        },
+        "hellaswag": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.4781915952997411,
+          "primary_stderr": 0.004985032806802437,
+          "acc": 0.3761202947619996,
+          "acc_stderr": 0.004834207964061318,
+          "acc_norm": 0.4781915952997411,
+          "acc_norm_stderr": 0.004985032806802437,
+          "sample_len": 10042
+        },
+        "piqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.6735582154515778,
+          "primary_stderr": 0.010940467046177302,
+          "acc": 0.6751904243743199,
+          "acc_stderr": 0.010926296238294036,
+          "acc_norm": 0.6735582154515778,
+          "acc_norm_stderr": 0.010940467046177302,
+          "sample_len": 1838
+        },
+        "winogrande": {
+          "primary_metric": "acc",
+          "primary_value": 0.5516969218626677,
+          "primary_stderr": 0.013977171307126337,
+          "acc": 0.5516969218626677,
+          "acc_stderr": 0.013977171307126337,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 1267
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.32,
+          "primary_stderr": 0.02088234048876181,
+          "acc": 0.212,
+          "acc_stderr": 0.01829703700401388,
+          "acc_norm": 0.32,
+          "acc_norm_stderr": 0.02088234048876181,
+          "sample_len": 500
+        },
+        "mmlu": {
+          "primary_metric": "acc",
+          "primary_value": 0.23643355647343683,
+          "primary_stderr": 0.003580403387472923,
+          "acc": 0.23643355647343683,
+          "acc_stderr": 0.003580403387472923,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 14042
+        }
+      }
+    },
+    {
+      "model_id": "cand-016-kd30m",
+      "label": "cand-016 round-2 ~30M",
+      "checkpoint": "outputs/checkpoints/cand-016-kd2",
+      "lineage_kd_tokens": 30001152,
+      "source_artifact": "outputs/eval/09_final_eval_round2.json",
+      "protocol": "lm-eval stable seven-task suite, zero-shot",
+      "kernel_mode": "safe_torch",
+      "mean_primary_accuracy": 0.4407652276139927,
+      "metrics": {
+        "arc_challenge": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.29436860068259385,
+          "primary_stderr": 0.013318528460539426,
+          "acc": 0.2764505119453925,
+          "acc_stderr": 0.013069662474252423,
+          "acc_norm": 0.29436860068259385,
+          "acc_norm_stderr": 0.013318528460539426,
+          "sample_len": 1172
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.5298821548821548,
+          "primary_stderr": 0.010241444322886432,
+          "acc": 0.5909090909090909,
+          "acc_stderr": 0.010088775152615784,
+          "acc_norm": 0.5298821548821548,
+          "acc_norm_stderr": 0.010241444322886432,
+          "sample_len": 2376
+        },
+        "hellaswag": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.48287193786098387,
+          "primary_stderr": 0.004986852842576723,
+          "acc": 0.3833897629954192,
+          "acc_stderr": 0.004852182621274259,
+          "acc_norm": 0.48287193786098387,
+          "acc_norm_stderr": 0.004986852842576723,
+          "sample_len": 10042
+        },
+        "piqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.6789989118607181,
+          "primary_stderr": 0.010892641574707904,
+          "acc": 0.6817192600652884,
+          "acc_stderr": 0.010868093932082231,
+          "acc_norm": 0.6789989118607181,
+          "acc_norm_stderr": 0.010892641574707904,
+          "sample_len": 1838
+        },
+        "winogrande": {
+          "primary_metric": "acc",
+          "primary_value": 0.5422257300710339,
+          "primary_stderr": 0.014002284504422435,
+          "acc": 0.5422257300710339,
+          "acc_stderr": 0.014002284504422435,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 1267
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.322,
+          "primary_stderr": 0.020916668330019882,
+          "acc": 0.216,
+          "acc_stderr": 0.01842190906141194,
+          "acc_norm": 0.322,
+          "acc_norm_stderr": 0.020916668330019882,
+          "sample_len": 500
+        },
+        "mmlu": {
+          "primary_metric": "acc",
+          "primary_value": 0.23500925794046432,
+          "primary_stderr": 0.0035747899527976733,
+          "acc": 0.23500925794046432,
+          "acc_stderr": 0.0035747899527976733,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 14042
+        }
+      }
+    },
+    {
+      "model_id": "cand-016-final35m",
+      "label": "cand-016 mini-final2 ~35M",
+      "checkpoint": "/arf/scratch/skantar/MinitronSSM/outputs/checkpoints/cand-016-mini-final2",
+      "lineage_kd_tokens": 35001344,
+      "source_artifact": "outputs/eval/12_report_final35m.json",
+      "protocol": "lm-eval stable seven-task suite, zero-shot",
+      "kernel_mode": "safe_torch",
+      "mean_primary_accuracy": 0.4483238521423955,
+      "metrics": {
+        "arc_challenge": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.31143344709897613,
+          "primary_stderr": 0.013532472099850949,
+          "acc": 0.2960750853242321,
+          "acc_stderr": 0.01334091608524626,
+          "acc_norm": 0.31143344709897613,
+          "acc_norm_stderr": 0.013532472099850949,
+          "sample_len": 1172
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.5387205387205387,
+          "primary_stderr": 0.010228972678389613,
+          "acc": 0.5837542087542088,
+          "acc_stderr": 0.010114819404500873,
+          "acc_norm": 0.5387205387205387,
+          "acc_norm_stderr": 0.010228972678389613,
+          "sample_len": 2376
+        },
+        "hellaswag": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.4894443337980482,
+          "primary_stderr": 0.004988669343786964,
+          "acc": 0.38568014339772955,
+          "acc_stderr": 0.004857607641160633,
+          "acc_norm": 0.4894443337980482,
+          "acc_norm_stderr": 0.004988669343786964,
+          "sample_len": 10042
+        },
+        "piqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.676822633297062,
+          "primary_stderr": 0.01091197412428213,
+          "acc": 0.6751904243743199,
+          "acc_stderr": 0.010926296238294036,
+          "acc_norm": 0.676822633297062,
+          "acc_norm_stderr": 0.01091197412428213,
+          "sample_len": 1838
+        },
+        "winogrande": {
+          "primary_metric": "acc",
+          "primary_value": 0.5422257300710339,
+          "primary_stderr": 0.014002284504422433,
+          "acc": 0.5422257300710339,
+          "acc_stderr": 0.014002284504422433,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 1267
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.334,
+          "primary_stderr": 0.021113492347743727,
+          "acc": 0.236,
+          "acc_stderr": 0.01900869962208473,
+          "acc_norm": 0.334,
+          "acc_norm_stderr": 0.021113492347743727,
+          "sample_len": 500
+        },
+        "mmlu": {
+          "primary_metric": "acc",
+          "primary_value": 0.24562028201110953,
+          "primary_stderr": 0.003628815896666762,
+          "acc": 0.24562028201110953,
+          "acc_stderr": 0.003628815896666762,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 14042
+        }
+      }
+    },
+    {
+      "model_id": "official-4b",
+      "label": "Official NVIDIA Nemotron-H 4B",
+      "checkpoint": "nvidia/Nemotron-H-4B-Base-8K",
+      "lineage_kd_tokens": null,
+      "source_artifact": "outputs/eval/12_report_reference4b_native.json",
+      "protocol": "lm-eval stable seven-task suite, zero-shot",
+      "kernel_mode": "native",
+      "mean_primary_accuracy": 0.6462718744154439,
+      "metrics": {
+        "arc_challenge": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.515358361774744,
+          "primary_stderr": 0.014604496129394911,
+          "acc": 0.47952218430034127,
+          "acc_stderr": 0.014599131353035007,
+          "acc_norm": 0.515358361774744,
+          "acc_norm_stderr": 0.014604496129394911,
+          "sample_len": 1172
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.7866161616161617,
+          "primary_stderr": 0.008406793641245977,
+          "acc": 0.8021885521885522,
+          "acc_stderr": 0.008173952955350809,
+          "acc_norm": 0.7866161616161617,
+          "acc_norm_stderr": 0.008406793641245977,
+          "sample_len": 2376
+        },
+        "hellaswag": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.7382991435968931,
+          "primary_stderr": 0.004386622589119194,
+          "acc": 0.5493925512846046,
+          "acc_stderr": 0.004965375341643118,
+          "acc_norm": 0.7382991435968931,
+          "acc_norm_stderr": 0.004386622589119194,
+          "sample_len": 10042
+        },
+        "piqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.7894450489662677,
+          "primary_stderr": 0.009512378081238773,
+          "acc": 0.7812840043525572,
+          "acc_stderr": 0.009644731932667587,
+          "acc_norm": 0.7894450489662677,
+          "acc_norm_stderr": 0.009512378081238773,
+          "sample_len": 1838
+        },
+        "winogrande": {
+          "primary_metric": "acc",
+          "primary_value": 0.6992896606156275,
+          "primary_stderr": 0.012888010494704725,
+          "acc": 0.6992896606156275,
+          "acc_stderr": 0.012888010494704725,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 1267
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm",
+          "primary_value": 0.436,
+          "primary_stderr": 0.0221989546414768,
+          "acc": 0.326,
+          "acc_stderr": 0.020984009562393567,
+          "acc_norm": 0.436,
+          "acc_norm_stderr": 0.0221989546414768,
+          "sample_len": 500
+        },
+        "mmlu": {
+          "primary_metric": "acc",
+          "primary_value": 0.5588947443384134,
+          "primary_stderr": 0.004055681339345781,
+          "acc": 0.5588947443384134,
+          "acc_stderr": 0.004055681339345781,
+          "acc_norm": null,
+          "acc_norm_stderr": null,
+          "sample_len": 14042
+        }
+      }
+    }
+  ]
+}

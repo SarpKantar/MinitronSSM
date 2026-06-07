@@ -1,0 +1,7 @@
+"
+Known gaps (document, don’t hide)
+These are limitations of this run, not blockers to calling the pipeline “implemented”:
+1. Mamba structural pruning never applied (stage 04 no-op) — only FFN + embedding pruned; Mamba dims still 128/64. Success criterion #5 (“Mamba head pruning is useful”) is not demonstrated.
+2. Depth-pruning ablation — plan mentions optional depth comparison; not clearly run as a separate ablation.
+
+

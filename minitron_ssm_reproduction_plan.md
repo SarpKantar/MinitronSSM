@@ -829,9 +829,10 @@ This appendix maps core plan sections to the scaffolded implementation files in 
 - Section 6 (Importance estimation): `scripts/02_importance.py`, `src/minitron_ssm/importance/hooks.py`, `src/minitron_ssm/importance/mamba_scores.py`, `src/minitron_ssm/importance/ffn_scores.py`, `src/minitron_ssm/importance/embed_scores.py`
 - Section 7 (Pruning implementation): `scripts/04_prune_candidates.py`, `src/minitron_ssm/pruning/mamba.py`, `src/minitron_ssm/pruning/ffn.py`, `src/minitron_ssm/pruning/embed.py`, `src/minitron_ssm/pruning/depth.py`, `src/minitron_ssm/pruning/apply.py`
 - Section 8 (Candidate search): `scripts/03_generate_candidates.py`, `scripts/05_eval_candidates.py`, `scripts/06_select_top3.py`, `src/minitron_ssm/search/param_count.py`, `src/minitron_ssm/search/space.py`, `src/minitron_ssm/search/filter.py`
-- Section 9 (Short KD): `scripts/07_kd_smoke.py`, `scripts/08_kd_train.py`, `src/minitron_ssm/kd/losses.py`, `src/minitron_ssm/kd/trainer.py`, `src/minitron_ssm/kd/cache.py`
-- Section 10 (Optional mini final KD): `scripts/10_optional_mini_kd.py`
-- Section 11 (Evaluation plan): `scripts/09_final_eval.py`, `src/minitron_ssm/eval/harness.py`, `configs/eval.yaml`
+- Section 9 (Short KD): `scripts/07_kd_smoke.py`, `scripts/08_kd_train.py`, `scripts/08b_kd_train_round2.py`, `src/minitron_ssm/kd/losses.py`, `src/minitron_ssm/kd/trainer.py`, `src/minitron_ssm/kd/cache.py`
+- Section 10 (Optional mini final KD): `scripts/10_optional_mini_kd.py`, `scripts/10b_mini_kd_round2.py`
+- Section 11 (Evaluation plan): `scripts/09_final_eval.py`, `scripts/09b_final_eval_from_results.py`, `scripts/11_paper_table4_eval.py`, `scripts/12_report_suite_eval.py`, `scripts/12_report_efficiency.py`, `scripts/13_finalize_report_artifacts.py`, `src/minitron_ssm/eval/harness.py`, `configs/eval.yaml`
+- Report-focused launchers: `run_paper_table4_eval.slurm`, `submit_paper_table4_eval.sh`, `run_report_campaign.slurm`, `submit_report_campaign.sh`
 - Shared configuration and utilities: `configs/base.yaml`, `configs/data.yaml`, `configs/importance.yaml`, `configs/search_space.yaml`, `configs/kd.yaml`, `src/minitron_ssm/utils/config.py`, `src/minitron_ssm/utils/shape_check.py`
 
 Implementation status rule: modules marked with `TODO(stage-N)` are intentionally scaffold-only and get completed during the corresponding execution stage.
@@ -842,20 +843,224 @@ This section tracks *actual* repository progress so future chats can resume quic
 
 ---
 
-### Pipeline execution status (as of 2026-06-03)
+### Pipeline execution status (as of 2026-06-07)
 
 | Stage | Script | Status | Output artifact |
 |-------|--------|--------|-----------------|
-| 01 | `01_baseline.py` | ✅ Done (job 1280917) | `outputs/eval/01_baseline.json` — loss=2.3257, ppl=10.23 |
+| 01 | `01_baseline.py` | ✅ Done (job 1280917) | `outputs/eval/01_baseline.json` |
 | 02 | `02_importance.py` | ✅ Done (prior job) | `outputs/scores/importance.pt` |
 | 03 | `03_generate_candidates.py` | ✅ Done (job 1280919) | `outputs/candidates/candidates.json` — 20 candidates |
 | 04 | `04_prune_candidates.py` | ✅ Done (job 1280919) | `outputs/checkpoints/*/` — 21 checkpoints |
 | 05 | `05_eval_candidates.py` | ✅ Done (job 1280919) | `outputs/eval/05_candidates.json` |
 | 06 | `06_select_top3.py` | ✅ Done (job 1280919) | `outputs/eval/06_top3.json` — cand-009, cand-016, cand-006 |
-| 07 | `07_kd_smoke.py` | 🔁 Re-running after CUDA OOM fix (seq_len 8192→2048) | — |
-| 08 | `08_kd_train.py` | ⏳ Not started | — |
-| 09 | `09_final_eval.py` | ⏳ Not started | — |
-| 10 | `10_optional_mini_kd.py` | ⏳ Optional | — |
+| 07 | `07_kd_smoke.py` | ✅ Done (job 1285584) | `outputs/eval/07_kd_smoke.json` — cand-009, 2M tokens |
+| 08 | `08_kd_train.py` | ✅ Done (array 1285594) | `outputs/eval/08_kd_results.json` — 15M/candidate, last_loss ~0.94 |
+| 08b | `08b_kd_train_round2.py` | ✅ Done (array 1286270) | `outputs/eval/08_kd_results_round2.json`, `cand-*-kd2` — +15M/candidate |
+| 09 | `09_final_eval.py` | ✅ Done (job 1286114, ~7h) | `outputs/eval/09_final_eval.json` — parent / pruned / round-1 KD |
+| 09b | `09b_final_eval_from_results.py` | ✅ Done (job 1287433_0, 2h58m) | `outputs/eval/09_final_eval_round2.json` — cand-016-kd2 |
+| 09c | `09b` + `--mini-kd-json` | ✅ Done (job 1287433_1, 2h58m) | `outputs/eval/09_final_eval_mini_kd.json` — cand-016-mini-final |
+| 10 | `10_optional_mini_kd.py` | ✅ Done (job 1286115, 10M) | `outputs/eval/10_mini_kd.json` — cand-016, last_loss 0.77 |
+| 10b | `10b_mini_kd_round2.py` | ✅ Done (job 1287432, 12h55m, +10M) | `outputs/eval/10_mini_kd_round2.json`, `cand-016-mini-final2` |
+| 11 | `11_paper_table4_eval.py` | ⚠️ Partial evidence preserved | Parent/final zero-shot + 5-shot MMLU completed; reference zero-shot completed; generation tasks did not fit the deadline |
+| 12a | `12_report_suite_eval.py` | ✅ Done (array 1290826 tasks 0–2, 2h58m43s each) | pre-KD, 15M KD, and 35M final on the stable seven-task suite |
+| 12b | `12_report_suite_eval.py` | ✅ Done (job 1290826_3, 55m37s) | `outputs/eval/12_report_reference4b_native.json` |
+| 12c | `12_report_efficiency.py` | ✅ Done (job 1290826_4, 34m57s) | `outputs/eval/12_report_final35m_efficiency.json` |
+
+**Reproduction target from `ReproducingPlan.txt`:** reduced Table-1 search +
+short KD on top-3 + optional mini final KD + internal Table-4 comparison.
+**Core pipeline, all planned training branches, and all final report-evaluation
+jobs are complete.** No additional training or benchmark jobs are required
+before report writing. Artifact consolidation, stage-09 compaction, and final
+verification are also complete.
+
+Final report writing can use all completed stage-09 results, the preserved
+stage-11 partial results, the complete aligned stage-12 recovery comparison,
+the native official-4B reference, and the final efficiency run.
+
+**Round-1 harness trend (`09_final_eval.json`, acc):** parent ≫ pruned; KD recovers on several tasks (e.g. hellaswag 0.25→0.36, piqa 0.49→0.67 vs pruned).
+
+**Final report jobs (submitted 2026-06-06, completed 2026-06-07):**
+- `1290826_0`: `cand-016` pre-KD, completed in 2h58m43s, exit `0:0`
+- `1290826_1`: `cand-016-kd` at 15M tokens, completed in 2h58m43s, exit `0:0`
+- `1290826_2`: `cand-016-mini-final2` at ~35M lineage tokens, completed in
+  2h58m43s, exit `0:0`
+- `1290826_3`: official NVIDIA 4B reference, completed in 55m37s, exit `0:0`
+- `1290826_4`: final 35M efficiency, completed in 34m57s, exit `0:0`
+
+All five passed clean-GPU preflight and published completed JSON. The log scan
+found no traceback, CUDA OOM, BrokenPipeError, non-finite result, or partial
+benchmark write. The benchmark `.err` files contain lm-eval progress bars and
+expected zero-shot override notices. The efficiency `.err` contains non-fatal
+AMP deprecation, long-tokenization, cache, and right-padding warnings; the
+loss, perplexity, throughput, TTFT, and memory measurements are finite.
+
+**Checkpoint lineage (do not add branches together):**
+
+```text
+cand-016 (pruned)
+  └─ stage 08: +15M → cand-016-kd
+       ├─ stage 08b: +15M → cand-016-kd2
+       │    total on this lineage: ~30M tokens
+       └─ stage 10: +10M → cand-016-mini-final
+            └─ stage 10b: +10M → cand-016-mini-final2
+                 total on this lineage: ~35M tokens
+```
+
+---
+
+### Latest additions and finalized results (2026-06-06/07)
+
+**New evaluation/report tooling:**
+
+- `scripts/11_paper_table4_eval.py`: resumable mixed-shot Table-4-style
+  evaluator. It checkpoints after each shot group and includes a parquet-backed
+  Social IQA override for compatibility with `datasets>=4`.
+- `run_paper_table4_eval.slurm` / `submit_paper_table4_eval.sh`: parent,
+  official-4B, pre-KD, and final-model launchers with dependencies and clean-GPU
+  preflight.
+- `scripts/12_report_suite_eval.py`: focused, stable seven-task zero-shot
+  evaluator matching the successful stage-09 protocol.
+- `scripts/12_report_efficiency.py`: final-checkpoint LM loss, throughput,
+  latency, and peak-memory measurement.
+- `scripts/13_finalize_report_artifacts.py`: validates completed source JSON,
+  builds the report tables, creates a compact stage-09 copy, reads Safetensors
+  headers for effective checkpoint parameter counts, and records Slurm/job/
+  checkpoint provenance.
+- `run_report_campaign.slurm` / `submit_report_campaign.sh`: five independent
+  A100 tasks, so one model failure does not block the other report artifacts.
+- All new evaluators publish JSON atomically through node-local staging.
+
+**Preserved partial Table-4-style evidence:**
+
+- Job `1287577` parent: zero-shot group and 5-shot MMLU completed; GSM8K was
+  only 120/1319 after ~16.5 hours and could not finish inside 24 hours.
+- Job `1287580` final 35M model: zero-shot group and 5-shot MMLU completed;
+  GSM8K was only 41/1319 after ~4.8 hours and was stopped.
+- Job `1287578` official 4B: zero-shot group completed; 5-shot MMLU failed with
+  CUDA OOM.
+- Timestamped copies were saved as
+  `outputs/eval/11_table4_*.partial-preserved-20260606-224106.json`; no completed
+  measurements were discarded.
+- These stage-11 parent/final scores use the safe `torch_forward` fallback and
+  are diagnostic only. Their parent MMLU (24.59%) conflicts with the successful
+  native stage-09 parent MMLU (71.26%), demonstrating an evaluation execution
+  path mismatch rather than a real quality collapse.
+
+**Latest finalized job: official NVIDIA 4B native stable suite
+(`1290826_3`):**
+
+| Task | Accuracy | Normalized accuracy |
+|------|---------:|--------------------:|
+| ARC-Challenge | 47.95% | 51.54% |
+| ARC-Easy | 80.22% | 78.66% |
+| HellaSwag | 54.94% | 73.83% |
+| PIQA | 78.13% | 78.94% |
+| Winogrande | 69.93% | — |
+| OpenBookQA | 32.60% | 43.60% |
+| MMLU (0-shot) | 55.89% | — |
+
+Artifact: `outputs/eval/12_report_reference4b_native.json`. This run used the
+official model's native inference kernels and completed without OOM.
+
+**Latest finalized job: final 35M efficiency (`1290826_4`):**
+
+- Held-out LM loss: **3.28844**
+- Perplexity: **26.801**
+- Tokens evaluated: **1,007,493**
+- Batch 1, 4096→256: **4.679 tok/s**, TTFT **202.1 ms**, peak **15.48 GiB**
+- Batch 4, 4096→256: **4.862 tok/s**, TTFT **791.5 ms**, peak **34.72 GiB**
+
+Artifact: `outputs/eval/12_report_final35m_efficiency.json`. The LM-loss phase
+and throughput phase both completed successfully with finite results.
+
+**Final aligned cand-016 recovery results (`1290826_0`–`1290826_2`):**
+
+| Checkpoint | ARC-C norm | ARC-E norm | HellaSwag norm | PIQA norm | Winogrande | OpenBookQA norm | MMLU |
+|------------|-----------:|-----------:|---------------:|----------:|-----------:|----------------:|-----:|
+| pre-KD | 25.68% | 26.18% | 25.88% | 49.95% | 50.75% | 26.00% | 23.49% |
+| 15M KD | 29.78% | 50.59% | 47.24% | 66.43% | 55.96% | 30.20% | 23.81% |
+| final ~35M | 31.14% | 53.87% | 48.94% | 67.68% | 54.22% | 33.40% | 24.56% |
+
+The final model improves six of the seven headline metrics over pre-KD.
+Winogrande peaks at 15M and then falls by 1.74 percentage points, but remains
+3.47 points above pre-KD. MMLU improves only 1.08 points from pre-KD to 35M,
+consistent with the limited KD scale and the expectation that this training
+does not strongly improve static knowledge recall.
+
+Artifacts:
+- `outputs/eval/12_report_pre_kd.json`
+- `outputs/eval/12_report_kd15m.json`
+- `outputs/eval/12_report_final35m.json`
+
+---
+
+### Known gaps (document in final report)
+
+1. **Mamba structural pruning not applied** — stage 04 silently no-op'd on `block.mixer`; only FFN + embedding pruned. Success criterion #5 (Mamba head axis) is **not demonstrated**.
+
+2. **KD scale far below paper/plan** — 30M tokens on the round-2 branch and
+   approximately 35M on the final mini-KD lineage, vs plan 200M and paper 200M
+   lightweight / 380B final. `seq_len` 1024 vs 8192; `torch_forward` ~218 tok/s
+   on one A100.
+
+3. **Harness coverage by eval artifact** — `09_final_eval.json` = parent +
+   pruned + round-1 KD. `09_final_eval_round2.json` = cand-016 round-2 KD
+   (~30M branch). `09_final_eval_mini_kd.json` = cand-016 mini-final (~25M
+   branch). `12_report_final35m.json` contains the final ~35M checkpoint.
+   Their consolidated recovery table is `outputs/report/kd_recovery.{csv,json}`.
+
+4. **Slurm array task-2 cosmetic failures** — jobs `1285594_2` and `1286270_2` exit 6 (post-Python abort) after successful training; artifacts are valid. Broke `afterok` dependency for job 1286273.
+
+5. **Depth-pruning ablation** — not run as a separate comparison (plan optional).
+
+6. **Tables 2, 3, 5–8** — intentionally skipped per `ReproducingPlan.txt`.
+
+7. **NFS/Lustre and shared-GPU fragility** — JSON reads and Slurm log writes failed intermittently on compute nodes; job 1287295 also landed on a GPU with only 4.65 GiB free and OOM'd. Follow-up launchers now embed metadata JSON, publish compact results atomically, use stable home-backed Slurm logs, require a clean visible GPU, automatically requeue contaminated allocations, and exclude problematic nodes `palamut3`, `palamut5`, and `palamut6`.
+
+8. **Benchmark protocol remains primarily internal** — the stable comparison
+   suite is zero-shot for all seven tasks, including MMLU. A paper-aligned
+   mixed-shot campaign was attempted and produced useful partial evidence, but
+   GSM8K generation was far too slow and the reference 5-shot MMLU run OOM'd.
+   Therefore, use stable-suite results for quantitative model comparisons and
+   present stage-11 mixed-shot results as protocol/runtime diagnostics rather
+   than a complete Table-4 reproduction.
+
+---
+
+### Token / compute budget history — planned vs. actual vs. paper
+
+This table is the single reference for every budget decision made during
+implementation. Training reductions were forced by the memory/speed constraints
+of one 80 GB A100 per model and the `torch_forward` fallback instead of the
+fused CUDA kernel. Independent final evaluations were later parallelized across
+five A100s.
+
+| Stage | Parameter | Paper target | Original plan | Actual implemented | Reason for cut |
+|-------|-----------|-------------|---------------|-------------------|---------------|
+| 02 | calibration batches | 1024 × seq 8192 | same | same | no cut needed |
+| 05 | val tokens per candidate | ~1M (typical) | 1M | **1M** | no cut |
+| 07 | `smoke_test_tokens` | not in paper | **10M** | **2M** | OOM at seq 8192; OOM at seq 2048 with GA=768 (no updates); after GA fix, 2M ran cleanly in ~2.5 h |
+| 08 | `tokens_per_candidate` | **200M** | **200M** | **15M × 2 rounds = 30M unique** | torch_forward ~4.7 s/step; 15M ≈ 19h/slot; round 2 via `08b_kd_train_round2.py` (+15M, seed+1000) |
+| 08 | `seq_len` | 8192 | 8192 | **1024** | forward OOM at 8192 (64 GiB transient); OOM at 2048 after optimizer step (16 GiB transient + ~56 GiB resident > 80 GB); 1024 → 8 GiB transient, ~12 GB headroom |
+| 08 | `grad_accumulation` | ~768 (global/micro) | `"auto"` = 768 | **8** | GA=768 with 15M budget = 11 updates total (effectively no training); GA=8 → 1832 updates per candidate |
+| 10 | `target_tokens` | 380B (full paper final KD) | 1B (script default) | **10M** from round-1 KD | 1B at 4.7 s/step ≈ 56 days; 10M ≈ 13h |
+| 10b | additional continuation | — | optional | **+10M, completed** | resumed stage-10 checkpoint on a fresh seed; final mini-KD lineage reached ~35M total |
+
+**Throughput reality check:** The paper trains on multiple A100s with the fast
+fused Mamba CUDA kernel. Our single-GPU `torch_forward` fallback runs at
+~218 tok/s (seq 1024, micro 1, GA 8), making token budgets much more expensive
+in wall-clock time. Throughput does not change the value of a token already
+processed; it limits how many tokens can be processed before the deadline.
+The dominant quality gaps are therefore the much smaller token budget, shorter
+sequence length, public substitute data, and missing Mamba structural pruning.
+
+**Fidelity summary vs. paper:**
+- Embedding + FFN pruning: ✅ implemented correctly
+- Mamba head/channel pruning: ❌ silently no-op'd (see blocker note below) — checkpoints retain parent Mamba dims (128 heads, 64 head_dim)
+- KD loss (forward KL + CE blend): ✅ implemented
+- KD token budget: **30M** on the round-2 branch and **~35M** on the completed
+  mini-final branch, versus 200M lightweight KD in the paper
+- `seq_len` during KD: 1024 / 8192 = **12.5% of paper**; affects gradient diversity
 
 ---
 
@@ -933,18 +1138,207 @@ further ~10 GB and is the path to restoring a longer `seq_len`.
 
 ---
 
+### Known blocker (RESOLVED): KD loss flat + second OOM after enabling updates
+
+**Symptom 1 (flat loss):** stages 07/08 ran but the loss just oscillated in the
+10–17 band with no downward trend, and the smoke and train jobs printed
+*byte-identical* loss values step-for-step.
+
+**Root cause 1:** `grad_accumulation` was `"auto"` => `global_batch_size /
+micro_batch_size = 768/1 = 768` micro-steps per optimizer update. With the
+slashed token budgets the runs reached only ~1 (smoke) / ~12 (train) actual
+weight updates, so the model was effectively frozen — identical losses across
+jobs were just deterministic batch noise on the un-updated init weights. A
+secondary scheduler bug tied the cosine-decay horizon to `warmup_steps+1`, so
+the LR would have collapsed to its floor within ~120 updates regardless of run
+length.
+
+**Fix 1:**
+- `configs/kd.yaml`: `grad_accumulation: 8` (explicit; ~tokens/update = 8 *
+  micro * seq_len). Now ~245 updates (smoke) / ~2442 updates per candidate
+  (train).
+- `src/minitron_ssm/kd/trainer.py`: scheduler is built in `train()` from the
+  real total optimizer-step count (`ceil(target_tokens / tokens_per_update)`),
+  warmup-then-cosine over the whole run.
+- `src/minitron_ssm/kd/losses.py`: CE term now uses the causal next-token shift
+  (was comparing logits at position t with the token *at* t).
+
+**Symptom 2 (second OOM):** once updates actually fired, the first
+`optimizer.step()` allocated AdamW moment buffers (~19 GB, bf16) and the *next*
+backward's `(seq_len/128)` GiB transient overflowed the 80 GB card by ~1 GiB at
+seq_len=2048 (observed 64.2 GB resident + 16 GiB alloc).
+
+**Fix 2:** `configs/kd.yaml` `seq_len` 2048 → **1024** (transient 16→8 GiB,
+leaving ~12 GB headroom on top of teacher+student+grads+optimizer ≈ 56 GB).
+
+**Verification (jobs 1285584 smoke / 1285585 train, seq_len=1024, grad_accum=8):**
+no OOM past the optimizer step; loss falls 12.3 → 7.3 over the first 60 steps
+with the LR correctly ramping through warmup (1.7e-6 → 6.7e-6). ~4.7 s/step.
+
+**Stage 08 wall-time (RESOLVED):** at seq_len=1024 a candidate is ~step-bound at
+~4.7 s/step, so 20M tokens ≈ 25 h overflowed a 24 h slot — and the old script
+trained all 3 candidates sequentially in one job (checkpoints saved only after
+each `train()` returns). Restructured to **one candidate per job**:
+- `configs/kd.yaml`: `tokens_per_candidate` 20M → **15M** (~14.6k steps ≈ 19 h,
+  inside 24 h with margin).
+- `scripts/08_kd_train.py`: new `--candidate-index N` trains only `top[N]`,
+  writes `outputs/eval/08_kd_results.candNN.json`, then atomically re-merges the
+  aggregate `08_kd_results.json` (ordered by candidate index, so `[0]` stays the
+  top candidate for stage 09). Omitting the flag keeps the legacy all-in-one loop.
+- `run_kd_train.slurm`: now a Slurm array `--array=0-2`; each task gets its own
+  GPU + 24 h window. Logs go to `slurm-%A_%a.{out,err}` with timestamped symlinks.
+
+Verified (array job 1285594): task 0→cand-009, 1→cand-016, 2→cand-006, all
+training (1832 optimizer steps each) with no OOM.
+
+The durable fix for both memory and speed remains repairing the fused
+`causal_conv1d_fwd` kernel so the fast Mamba path can run instead of torch_forward.
+
+---
+
+### Final 12-hour report campaign (implemented)
+
+With training complete and only 12 hours left before report writing, the
+highest-value choice was evaluation rather than another short KD continuation.
+The report needed an aligned recovery curve and final efficiency evidence more
+than another checkpoint with too little time for complete evaluation.
+
+The implemented five-GPU campaign is:
+
+```text
+1290826_0: cand-016 pre-KD          → stable seven-task suite
+1290826_1: cand-016-kd, 15M         → stable seven-task suite
+1290826_2: cand-016-mini-final2     → stable seven-task suite
+1290826_3: official NVIDIA 4B       → stable seven-task suite, native kernels
+1290826_4: cand-016-mini-final2     → LM loss + throughput + TTFT + memory
+```
+
+This fills the most important report gaps:
+
+1. A directly aligned pre-KD → 15M KD → final ~35M KD comparison.
+2. A native official-4B reference under the same stable protocol.
+3. Final selected-model LM loss and efficiency measurements.
+4. Independent jobs, allowing up to five A100s without one failure blocking the
+   other evidence.
+
+All five jobs completed successfully. The three candidate jobs finished in
+2h58m43s each; the official reference finished in 55m37s; final efficiency
+finished in 34m57s.
+
+---
+
+### Implementation closure and report artifacts
+
+All implementation tasks requested before report writing are complete:
+
+1. The final Slurm logs and JSON outputs were verified.
+2. The candidate/Table-1 summary was generated as
+   `outputs/report/candidate_table1.{csv,json}`.
+3. The aligned pre-KD → 15M → 25M/30M → 35M recovery table was generated as
+   `outputs/report/kd_recovery.{csv,json}`.
+4. The benchmark table was generated as
+   `outputs/report/benchmark_compact.{csv,json}`.
+5. The efficiency table was generated as
+   `outputs/report/efficiency.{csv,json}`.
+6. The 407 MB `09_final_eval.json` was preserved unchanged and compacted to
+   `outputs/eval/09_final_eval_compact.json` (approximately 483 KB) by removing
+   only per-example `samples`; all 68 result entries per model remain.
+7. Exact source hashes, generated-artifact hashes, Slurm accounting records,
+   and 29 checkpoint records were written to
+   `outputs/report/job_checkpoint_manifest.json`.
+
+The candidate table records both planned search-space parameter counts and
+effective Safetensors checkpoint counts. For the selected candidates, the
+planned values are approximately 4.02B while the effective saved checkpoints
+are 4.864B, which makes the Mamba structural-pruning limitation explicit.
+
+No implementation work remains except final report writing. The report must
+retain the documented limitations: no Mamba structural pruning, reduced/public
+data, short KD context, small KD budget, zero-shot primary benchmark protocol,
+and partial stage-11 mixed-shot evidence.
+
+---
+
+### KD loss trajectory (stages 07/08) — analysed, NOT a blocker
+
+Per-step training loss decreases smoothly through warmup, briefly spikes at the
+LR peak (~step 610, recovers), then "oscillates" 0.1–1.6 for the rest. This is
+expected noise: `micro_batch_size=1` means each logged value is the loss on one
+1024-token sequence, and the trainer logs the *instantaneous* (un-averaged)
+loss. The smoothed trend keeps improving — for cand-009, first-half mean 1.93 →
+second-half mean 0.92, sub-1.0 fraction 31%→52%; all 3 candidates converge to
+last_loss ~0.94. The saved checkpoints are valid; proceed to stage 09.
+(Optional future polish: log a running-mean loss, and/or lower the 5e-5 peak LR
+or lengthen warmup to remove the step-610 spike.)
+
+### Stage 09/10 enablement (this session)
+
+- **Checkpoint-format blocker (fixed):** `save_candidate` writes `config.json`
+  as candidate metadata, not an HF config, so the harness's
+  `lm_eval(model="hf", pretrained=<path>)` loader (`from_pretrained`) cannot load
+  the pruned/KD checkpoints. Fixed by evaluating in-memory:
+  - `src/minitron_ssm/eval/harness.py`: `run_harness` now accepts an in-memory
+    `transformers` model (+ tokenizer) and wraps it in lm-eval's `HFLM`; the
+    string/path branch still uses the `from_pretrained` loader (for the parent).
+  - `scripts/09_final_eval.py`: loads the parent once, rebuilds `best_pruned` /
+    `best_kd` via `build_pruned_model` + `load_candidate` + `disable_fast_mamba_kernels`
+    (same path as stages 07/08), evaluates one at a time, freeing GPU between.
+- **`scripts/10_optional_mini_kd.py` (fixed):** replaced `copy.deepcopy(teacher)`
+  + `load_state_dict(strict=False)` (a full 8B student that OOMs and silently
+  drops shape-mismatched weights) with the `build_pruned_model` + `strict=True`
+  path, resuming from the best stage-08 KD checkpoint.
+- **Follow-up Slurm scripts:** `run_final_eval_followups.slurm` runs round-2 and
+  mini-final harness evaluation as separate array tasks;
+  `run_mini_kd_round2.slurm` runs stage 10b for another 10M tokens.
+  `submit_final_eval_followups.sh` and `submit_mini_kd_round2.sh` embed metadata
+  JSON on the login node. They use GPU preflight/requeue logic and stable
+  home-backed logs under `/arf/home/skantar/minitron_job_logs/`.
+
+### Stage 11/12 report enablement (latest session)
+
+- The first paper-aligned evaluator failed on Social IQA because
+  `datasets==4.8.5` no longer executes repository dataset scripts. The new
+  evaluator supplies the same task configuration against Hugging Face's
+  `refs/convert/parquet` revision; all 1954 Social IQA validation records load.
+- Mixed-shot evaluation is resumable by group: zero-shot, 5-shot MMLU, 8-shot
+  GSM8K, 0-shot HumanEval, and 3-shot MBPP. Completed groups are written before
+  the next group starts.
+- HumanEval/MBPP are explicitly gated through
+  `confirm_run_unsafe_code=True` and `HF_ALLOW_CODE_EVAL=1`.
+- Long generation tasks proved incompatible with the final wall-clock budget,
+  so the completed groups were preserved and the campaign was replaced with
+  the stable seven-task report suite.
+- Before cancelling jobs `1287577`, `1287579`, and `1287580`, their JSON files
+  were copied to timestamped `partial-preserved` artifacts.
+- Array `1290826` launched five independent jobs on five A100s. After the
+  requested five-minute observation window, every task had loaded its model,
+  entered application work, published a valid JSON status file, and showed no
+  traceback, OOM, shape mismatch, or non-finite loss.
+- All five array tasks later completed with exit code `0:0`; the final logs and
+  completed JSON were re-checked before artifact consolidation.
+
 ### Code changes made in this chat session
 
 - `src/minitron_ssm/models/load.py`:
   - Added `disable_fast_mamba_kernels(model)` — monkey-patches `cuda_kernels_forward → torch_forward` on all Mamba mixer blocks to avoid `TypeError: causal_conv1d_fwd() incompatible arguments` during training.
-  - `build_pruned_model` extended to override Mamba config fields (currently over-aggressive — see blocker above).
+  - `build_pruned_model` reconstructs saved candidate shapes and intentionally
+    does not override Mamba dimensions because stage-04 checkpoints retained
+    the parent Mamba tensor shapes.
 - `scripts/07_kd_smoke.py`: calls `disable_fast_mamba_kernels` on the KD student.
 - `scripts/08_kd_train.py`: aligned with stage-05 loading pattern (`build_pruned_model` + `strict=True`); calls `disable_fast_mamba_kernels`.
-- `configs/kd.yaml`: reduced token budgets (`smoke_test_tokens` 10M→2M, `tokens_per_candidate` 200M→20M).
+- `configs/kd.yaml`: reduced token budgets (`smoke_test_tokens` 10M→2M,
+  `tokens_per_candidate` 200M→15M), sequence length 8192→1024, and gradient
+  accumulation to 8.
 - `run_kd_smoke.slurm`: new Slurm script for stage 07 only.
 - `run_kd_train.slurm`: new Slurm script for stage 08 only.
-- All four Slurm scripts redirect output to `logs/<name>/slurm-<jobid>.{out,err}`.
+- Follow-up and report Slurm scripts use stable home-backed logs plus
+  repository symlinks.
 - `runtime_estimates.md`: per-script wall-time estimates table.
+- Added `scripts/11_paper_table4_eval.py`,
+  `scripts/12_report_suite_eval.py`, `scripts/12_report_efficiency.py`, and
+  their Slurm submitters.
+- Added `scripts/13_finalize_report_artifacts.py` and generated the final
+  compact tables, stage-09 compact copy, and provenance manifest.
 
 ---
 
@@ -962,3 +1356,16 @@ further ~10 GB and is the path to restoring a longer `seq_len`.
 
 - `python -m compileall -q src scripts` passed (no syntax errors).
 - `python scripts/07_kd_smoke.py --dry-run` and `08_kd_train.py --dry-run` both passed, showing new token budgets correctly.
+- `python -m py_compile scripts/11_paper_table4_eval.py
+  scripts/12_report_suite_eval.py scripts/12_report_efficiency.py` passed.
+- `python -m compileall -q src scripts tests` passed after finalization.
+- `bash -n` passed for all new Slurm and submit scripts.
+- `sbatch --test-only` accepted both report launchers.
+- The stage-12 five-minute startup check found all five array tasks healthy;
+  tasks 3 and 4 later completed with exit code 0.
+- Final Slurm accounting confirms all stage-12 tasks completed with exit
+  `0:0`; strict JSON parsing passed for all report artifacts and the compact
+  stage-09 result.
+- `/arf/home/skantar/anaconda3/envs/minitron/bin/python -m pytest -q` passed:
+  **35 tests passed** (final cached run: 6.02 seconds).
+- `git diff --check` passed for the final script, test, and plan edits.

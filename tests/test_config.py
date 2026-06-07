@@ -40,7 +40,8 @@ def test_load_search_space():
 def test_load_kd():
     kd = cfg.load_kd()
     assert 0.0 < kd.objective.alpha <= 1.0
-    assert kd.budget.tokens_per_candidate == 200_000_000
+    assert kd.budget.tokens_per_candidate == 15_000_000
+    assert kd.budget.smoke_test_tokens == 2_000_000
     assert kd.optimizer.name == "adamw"
 
 

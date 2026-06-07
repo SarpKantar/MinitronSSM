@@ -1,0 +1,18 @@
+[Thu Jun  4 08:56:12 PM +03 2026] Job started on palamut1
+[Thu Jun  4 08:56:34 PM +03 2026] >>> Running: python scripts/09_final_eval.py
+Passed argument batch_size = auto:1. Detecting largest batch size
+Determined largest batch size: 40
+2026-06-04 21:16:06 [INFO] final-eval: evaluated parent
+2026-06-04 21:16:06 [INFO] final-eval: building best_pruned from outputs/checkpoints/cand-009
+2026-06-04 21:16:44 [INFO] final-eval: disabled fused Mamba kernels for 24 module(s)
+Passed argument batch_size = auto:1. Detecting largest batch size
+Determined largest batch size: 3
+2026-06-05 00:37:29 [INFO] final-eval: evaluated best_pruned
+2026-06-05 00:37:29 [INFO] final-eval: building best_kd from outputs/checkpoints/cand-009-kd
+2026-06-05 00:38:03 [INFO] final-eval: disabled fused Mamba kernels for 24 module(s)
+Passed argument batch_size = auto:1. Detecting largest batch size
+Determined largest batch size: 3
+2026-06-05 03:59:33 [INFO] final-eval: evaluated best_kd
+2026-06-05 03:59:43 [INFO] final-eval: wrote outputs/eval/09_final_eval.json
+[Fri Jun  5 03:59:55 AM +03 2026] <<< Finished: python scripts/09_final_eval.py
+[Fri Jun  5 03:59:55 AM +03 2026] Job finished successfully

@@ -18,11 +18,21 @@ def run_harness(
     cfg: EvalConfig,
     *,
     include_optional: bool = False,
+    tokenizer: Any = None,
+    batch_size: Any = None,
 ) -> Dict[str, Any]:
     """Run the configured lm-eval-harness task list.
 
-    Currently supports path-based evaluation (`model="hf"`). In-memory
-    model wrappers can be added later if needed.
+    Two modes:
+
+    * ``model_or_path`` is a string / :class:`~pathlib.Path` -> evaluated via
+      the built-in ``model="hf"`` path loader (``from_pretrained``). Use this
+      for models stored as a proper HuggingFace checkpoint (e.g. the parent).
+    * ``model_or_path`` is an in-memory ``transformers`` model -> wrapped in
+      lm-eval's ``HFLM``. Use this for the pruned / KD students, whose on-disk
+      ``config.json`` is candidate metadata (not an HF config) and therefore
+      cannot be loaded with ``from_pretrained``. A matching ``tokenizer`` must
+      be supplied in this mode.
     """
     tasks = task_list(cfg, include_optional=include_optional)
     try:
@@ -34,20 +44,32 @@ def run_harness(
             "tasks": tasks,
         }
 
-    if not isinstance(model_or_path, (str, Path)):
-        raise NotImplementedError(
-            "run_harness currently expects a checkpoint path/string. "
-            "In-memory model objects are not wired yet."
+    bs = batch_size if batch_size is not None else cfg.lm_eval_harness.batch_size
+    num_fewshot = int(cfg.lm_eval_harness.num_fewshot)
+
+    if isinstance(model_or_path, (str, Path)):
+        out = simple_evaluate(
+            model="hf",
+            model_args=f"pretrained={model_or_path},trust_remote_code=True",
+            tasks=tasks,
+            num_fewshot=num_fewshot,
+            batch_size=bs,
+        )
+        return dict(out)
+
+    if tokenizer is None:
+        raise ValueError(
+            "run_harness with an in-memory model requires a matching tokenizer"
         )
 
-    model_path = str(model_or_path)
-    model_args = f"pretrained={model_path},trust_remote_code=True"
+    from lm_eval.models.huggingface import HFLM
+
+    lm = HFLM(pretrained=model_or_path, tokenizer=tokenizer, batch_size=bs)
     out = simple_evaluate(
-        model="hf",
-        model_args=model_args,
+        model=lm,
         tasks=tasks,
-        num_fewshot=int(cfg.lm_eval_harness.num_fewshot),
-        batch_size=cfg.lm_eval_harness.batch_size,
+        num_fewshot=num_fewshot,
+        batch_size=bs,
     )
     return dict(out)
 

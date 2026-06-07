@@ -8,7 +8,6 @@ This is the "if time remains" stage. Not equivalent to the paper's
 
 from __future__ import annotations
 
-import copy
 import json
 from pathlib import Path
 
@@ -17,7 +16,11 @@ from _common import base_parser, print_resolved
 from minitron_ssm.data.mixture import mixed_stream
 from minitron_ssm.data.tokenize import packed_token_batches
 from minitron_ssm.kd.trainer import KDTrainer
-from minitron_ssm.models.load import load_parent
+from minitron_ssm.models.load import (
+    build_pruned_model,
+    disable_fast_mamba_kernels,
+    load_parent,
+)
 from minitron_ssm.utils.checkpoint import load_candidate, save_candidate
 from minitron_ssm.utils.config import load_base, load_data, load_kd
 from minitron_ssm.utils.logging import get_logger
@@ -54,9 +57,20 @@ def main() -> int:
 
     best = min(kd_results, key=lambda x: x.get("last_loss", float("inf")))
     teacher, tokenizer = load_parent(base, eval_mode=True)
-    student = copy.deepcopy(teacher)
+    # Resume from the best stage-08 KD checkpoint. Rebuild the pruned shell from
+    # the parent config + candidate dims (the on-disk config.json is candidate
+    # metadata, not an HF config) and load the KD weights -- same path as
+    # stage 08, which keeps the single-A100 memory footprint viable. (The old
+    # deepcopy(teacher) made a full 8B student that both OOMs and drops
+    # shape-mismatched weights under strict=False.)
     state_dict, cand_cfg = load_candidate(Path(best["checkpoint"]))
-    student.load_state_dict(state_dict, strict=False)
+    student = build_pruned_model(teacher, cand_cfg, eval_mode=False)
+    student.load_state_dict(state_dict, strict=True)
+    patched = disable_fast_mamba_kernels(student)
+    if patched:
+        log.info("disabled fused Mamba kernels for %d module(s)", patched)
+    device = next(teacher.parameters()).device
+    student = student.to(device)
     student.train()
 
     stream = mixed_stream(data, seed=base.seed)
