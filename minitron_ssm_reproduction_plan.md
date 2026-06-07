@@ -832,7 +832,7 @@ This appendix maps core plan sections to the scaffolded implementation files in 
 - Section 9 (Short KD): `scripts/07_kd_smoke.py`, `scripts/08_kd_train.py`, `scripts/08b_kd_train_round2.py`, `src/minitron_ssm/kd/losses.py`, `src/minitron_ssm/kd/trainer.py`, `src/minitron_ssm/kd/cache.py`
 - Section 10 (Optional mini final KD): `scripts/10_optional_mini_kd.py`, `scripts/10b_mini_kd_round2.py`
 - Section 11 (Evaluation plan): `scripts/09_final_eval.py`, `scripts/09b_final_eval_from_results.py`, `scripts/11_paper_table4_eval.py`, `scripts/12_report_suite_eval.py`, `scripts/12_report_efficiency.py`, `scripts/13_finalize_report_artifacts.py`, `src/minitron_ssm/eval/harness.py`, `configs/eval.yaml`
-- Report-focused launchers: `run_paper_table4_eval.slurm`, `submit_paper_table4_eval.sh`, `run_report_campaign.slurm`, `submit_report_campaign.sh`
+- Report-focused launchers: `slurm/run_paper_table4_eval.slurm`, `slurm/submit_paper_table4_eval.sh`, `slurm/run_report_campaign.slurm`, `slurm/submit_report_campaign.sh`
 - Shared configuration and utilities: `configs/base.yaml`, `configs/data.yaml`, `configs/importance.yaml`, `configs/search_space.yaml`, `configs/kd.yaml`, `src/minitron_ssm/utils/config.py`, `src/minitron_ssm/utils/shape_check.py`
 
 Implementation status rule: modules marked with `TODO(stage-N)` are intentionally scaffold-only and get completed during the corresponding execution stage.
@@ -915,7 +915,7 @@ cand-016 (pruned)
 - `scripts/11_paper_table4_eval.py`: resumable mixed-shot Table-4-style
   evaluator. It checkpoints after each shot group and includes a parquet-backed
   Social IQA override for compatibility with `datasets>=4`.
-- `run_paper_table4_eval.slurm` / `submit_paper_table4_eval.sh`: parent,
+- `slurm/run_paper_table4_eval.slurm` / `slurm/submit_paper_table4_eval.sh`: parent,
   official-4B, pre-KD, and final-model launchers with dependencies and clean-GPU
   preflight.
 - `scripts/12_report_suite_eval.py`: focused, stable seven-task zero-shot
@@ -926,7 +926,7 @@ cand-016 (pruned)
   builds the report tables, creates a compact stage-09 copy, reads Safetensors
   headers for effective checkpoint parameter counts, and records Slurm/job/
   checkpoint provenance.
-- `run_report_campaign.slurm` / `submit_report_campaign.sh`: five independent
+- `slurm/run_report_campaign.slurm` / `slurm/submit_report_campaign.sh`: five independent
   A100 tasks, so one model failure does not block the other report artifacts.
 - All new evaluators publish JSON atomically through node-local staging.
 
@@ -1102,7 +1102,7 @@ Option B — Correct but expensive (re-run stage 04+05+06): Fix `apply_candidate
 
 ### Known blocker (RESOLVED): CUDA OOM in stage 07/08 KD forward pass
 
-**Symptom:** Both `run_kd_smoke.slurm` (job 1285550) and `run_kd_train.slurm`
+**Symptom:** Both `slurm/run_kd_smoke.slurm` (job 1285550) and `slurm/run_kd_train.slurm`
 (job 1285551) crashed with:
 ```
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 64.00 GiB.
@@ -1128,7 +1128,7 @@ the transient `G_intermediate`. `seq_len=2048` (16 GiB) fits this budget;
 
 **Fix applied:**
 - `configs/kd.yaml`: `training.seq_len` 8192 → 2048 (with an explanatory comment).
-- `run_kd_smoke.slurm` / `run_kd_train.slurm`: export
+- `slurm/run_kd_smoke.slurm` / `slurm/run_kd_train.slurm`: export
   `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` to reduce allocator
   fragmentation (explicitly recommended by the OOM message).
 
@@ -1185,7 +1185,7 @@ each `train()` returns). Restructured to **one candidate per job**:
   writes `outputs/eval/08_kd_results.candNN.json`, then atomically re-merges the
   aggregate `08_kd_results.json` (ordered by candidate index, so `[0]` stays the
   top candidate for stage 09). Omitting the flag keeps the legacy all-in-one loop.
-- `run_kd_train.slurm`: now a Slurm array `--array=0-2`; each task gets its own
+- `slurm/run_kd_train.slurm`: now a Slurm array `--array=0-2`; each task gets its own
   GPU + 24 h window. Logs go to `slurm-%A_%a.{out,err}` with timestamped symlinks.
 
 Verified (array job 1285594): task 0→cand-009, 1→cand-016, 2→cand-006, all
@@ -1287,10 +1287,10 @@ or lengthen warmup to remove the step-610 spike.)
   + `load_state_dict(strict=False)` (a full 8B student that OOMs and silently
   drops shape-mismatched weights) with the `build_pruned_model` + `strict=True`
   path, resuming from the best stage-08 KD checkpoint.
-- **Follow-up Slurm scripts:** `run_final_eval_followups.slurm` runs round-2 and
+- **Follow-up Slurm scripts:** `slurm/run_final_eval_followups.slurm` runs round-2 and
   mini-final harness evaluation as separate array tasks;
-  `run_mini_kd_round2.slurm` runs stage 10b for another 10M tokens.
-  `submit_final_eval_followups.sh` and `submit_mini_kd_round2.sh` embed metadata
+  `slurm/run_mini_kd_round2.slurm` runs stage 10b for another 10M tokens.
+  `slurm/submit_final_eval_followups.sh` and `slurm/submit_mini_kd_round2.sh` embed metadata
   JSON on the login node. They use GPU preflight/requeue logic and stable
   home-backed logs under `/arf/home/skantar/minitron_job_logs/`.
 
@@ -1329,8 +1329,8 @@ or lengthen warmup to remove the step-610 spike.)
 - `configs/kd.yaml`: reduced token budgets (`smoke_test_tokens` 10M→2M,
   `tokens_per_candidate` 200M→15M), sequence length 8192→1024, and gradient
   accumulation to 8.
-- `run_kd_smoke.slurm`: new Slurm script for stage 07 only.
-- `run_kd_train.slurm`: new Slurm script for stage 08 only.
+- `slurm/run_kd_smoke.slurm`: new Slurm script for stage 07 only.
+- `slurm/run_kd_train.slurm`: new Slurm script for stage 08 only.
 - Follow-up and report Slurm scripts use stable home-backed logs plus
   repository symlinks.
 - `runtime_estimates.md`: per-script wall-time estimates table.

@@ -1,11 +1,12 @@
 #!/bin/bash
+# Active Slurm submission wrapper; run from the repository root.
 # Submit stage 10b with its stage-10 metadata embedded on the login node.
 set -euo pipefail
 
 REPO=/arf/scratch/skantar/MinitronSSM
 cd "${REPO}"
 
-TEMPLATE="${REPO}/run_mini_kd_round2.slurm"
+TEMPLATE="${REPO}/slurm/run_mini_kd_round2.slurm"
 SOURCE="${REPO}/outputs/eval/10_mini_kd.json"
 python -m json.tool "${SOURCE}" >/dev/null
 

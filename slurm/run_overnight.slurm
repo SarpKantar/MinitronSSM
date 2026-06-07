@@ -1,31 +1,31 @@
 #!/bin/bash
-#SBATCH -J minitron_kd_smoke
+# Active Slurm launcher; run from the repository root.
+#SBATCH -J minitron_overnight
 #SBATCH -p palamut-cuda
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=16
 #SBATCH --time=24:00:00
-#SBATCH -o logs/kd_smoke/slurm-%j.out
-#SBATCH -e logs/kd_smoke/slurm-%j.err
+#SBATCH -o logs/overnight/slurm-%j.out
+#SBATCH -e logs/overnight/slurm-%j.err
 
 set -euo pipefail
 
 echo "[$(date)] Job started on $(hostname)"
 
+# Conda
 source /arf/home/skantar/anaconda3/etc/profile.d/conda.sh
 conda activate minitron
+
+# Project
 cd /arf/scratch/skantar/MinitronSSM
 
 # Time-sortable, human-readable aliases for this job's logs. Slurm writes the live
 # logs to slurm-<jobid>.{out,err}; these symlinks prefix the job start time
-# (YYYYMMDD-HHMMSS) so `ls logs/kd_smoke` shows oldest -> newest at a glance.
-LOG_DIR=logs/kd_smoke
+# (YYYYMMDD-HHMMSS) so `ls logs/overnight` shows oldest -> newest at a glance.
+LOG_DIR=logs/overnight
 STAMP=$(date +%Y%m%d-%H%M%S)
 ln -sf "slurm-${SLURM_JOB_ID}.out" "${LOG_DIR}/${STAMP}-job${SLURM_JOB_ID}.out"
 ln -sf "slurm-${SLURM_JOB_ID}.err" "${LOG_DIR}/${STAMP}-job${SLURM_JOB_ID}.err"
-
-# Reduce CUDA allocator fragmentation; the Mamba torch_forward fallback allocates
-# large short-lived fp32 tensors and benefits from expandable segments.
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 run_stage () {
   echo "[$(date)] >>> Running: $*"
@@ -33,14 +33,16 @@ run_stage () {
   echo "[$(date)] <<< Finished: $*"
 }
 
-# Resume from existing artifacts produced by stages 03-06:
-#   outputs/checkpoints/*
-#   outputs/eval/05_candidates.json
-#   outputs/eval/06_top3.json
-#
-# Keep this job to stage 07 only. Stage 08 trains top-3 candidates for
-# 200M tokens each and is not a safe fit for a single 24h slot on one A100.
-# Stage 09 also depends on stage 08 outputs for the KD model comparison.
+# You already completed stage 02, so continue from 03
+run_stage python scripts/03_generate_candidates.py
+run_stage python scripts/04_prune_candidates.py
+run_stage python scripts/05_eval_candidates.py
+run_stage python scripts/06_select_top3.py
 run_stage python scripts/07_kd_smoke.py
+
+# WARNING: these are very long; keep only if you really want full overnight run
+# run_stage python scripts/08_kd_train.py
+# run_stage python scripts/09_final_eval.py
+# run_stage python scripts/10_optional_mini_kd.py
 
 echo "[$(date)] Job finished successfully"

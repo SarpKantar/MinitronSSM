@@ -1,4 +1,5 @@
 #!/bin/bash
+# Active Slurm launcher; run from the repository root.
 #SBATCH -J minitron_kd_train
 #SBATCH -p palamut-cuda
 #SBATCH --gres=gpu:1
@@ -36,8 +37,8 @@ run_stage () {
 }
 
 # Prerequisites: stages 03-06 must be complete (artifacts produced by
-# run_overnight.slurm job 1280919 are already on disk).
-# Stage 07 smoke test must also be complete (run_kd_smoke.slurm).
+# slurm/run_overnight.slurm job 1280919 are already on disk).
+# Stage 07 smoke test must also be complete (slurm/run_kd_smoke.slurm).
 #
 # ONE CANDIDATE PER JOB: this is a Slurm array (0-2) over the top-3 candidates
 # in outputs/eval/06_top3.json. Each array task trains exactly one candidate and

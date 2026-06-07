@@ -1,4 +1,5 @@
 #!/bin/bash
+# Active Slurm launcher; run from the repository root.
 #SBATCH -J minitron_baseline
 #SBATCH -p palamut-cuda
 #SBATCH --gres=gpu:1

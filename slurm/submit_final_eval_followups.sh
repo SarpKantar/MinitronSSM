@@ -1,11 +1,12 @@
 #!/bin/bash
+# Active Slurm submission wrapper; run from the repository root.
 # Submit the round-2 and mini-final harness evaluations with metadata embedded.
 set -euo pipefail
 
 REPO=/arf/scratch/skantar/MinitronSSM
 cd "${REPO}"
 
-TEMPLATE="${REPO}/run_final_eval_followups.slurm"
+TEMPLATE="${REPO}/slurm/run_final_eval_followups.slurm"
 KD_SRC="${REPO}/outputs/eval/08_kd_results_round2.json"
 MINI_SRC="${REPO}/outputs/eval/10_mini_kd.json"
 

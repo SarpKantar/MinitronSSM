@@ -60,6 +60,8 @@ Mamba fallback was both memory intensive and slow:
 
 The complete execution history and deviations from the plan are documented in
 [minitron_ssm_reproduction_plan.md](minitron_ssm_reproduction_plan.md).
+For more detailed information about the process and implementation decisions,
+see that document.
 
 ## Original Paper Results
 
@@ -245,8 +247,9 @@ src/minitron_ssm/
   eval/                          LM loss, generation efficiency, lm-eval wrapper
   models/                        Nemotron-H loading and inspection
   utils/                         Config, checkpoint, logging, and shape helpers
-run_*.slurm                      Cluster launchers
-submit_*.sh                      Robust submission wrappers
+slurm/
+  run_*.slurm                    Cluster launchers
+  submit_*.sh                    Robust submission wrappers
 tests/                           Unit and integration tests
 outputs/report/                  Compact final CSV/JSON report artifacts
 ```
@@ -361,20 +364,20 @@ The provided launchers encode the A100 configuration used in this project.
 Submit stages only after their prerequisites have completed:
 
 ```bash
-sbatch run_baseline.slurm
+sbatch slurm/run_baseline.slurm
 
 # Run scripts/02_importance.py in a GPU allocation, then:
-sbatch run_overnight.slurm
+sbatch slurm/run_overnight.slurm
 
-sbatch run_kd_train.slurm
-sbatch run_kd_train_round2.slurm
-sbatch run_final_eval.slurm
-sbatch run_mini_kd.slurm
-bash submit_mini_kd_round2.sh
-bash submit_final_eval_followups.sh
+sbatch slurm/run_kd_train.slurm
+sbatch slurm/run_kd_train_round2.slurm
+sbatch slurm/run_final_eval.slurm
+sbatch slurm/run_mini_kd.slurm
+bash slurm/submit_mini_kd_round2.sh
+bash slurm/submit_final_eval_followups.sh
 
 # Five independent final evaluation tasks
-bash submit_report_campaign.sh
+bash slurm/submit_report_campaign.sh
 
 # CPU-side consolidation after all evaluations complete
 python scripts/13_finalize_report_artifacts.py

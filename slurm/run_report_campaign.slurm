@@ -1,5 +1,6 @@
 #!/bin/bash
-# Submitted as a five-task array by submit_report_campaign.sh.
+# Active Slurm launcher; run from the repository root.
+# Submitted as a five-task array by slurm/submit_report_campaign.sh.
 #SBATCH -J minitron_report
 #SBATCH -p palamut-cuda
 #SBATCH --gres=gpu:1

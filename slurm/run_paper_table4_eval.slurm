@@ -1,5 +1,6 @@
 #!/bin/bash
-# Submit through submit_paper_table4_eval.sh so EVAL_TARGET and paths are set.
+# Active Slurm launcher; run from the repository root.
+# Submit through slurm/submit_paper_table4_eval.sh so EVAL_TARGET and paths are set.
 #SBATCH -J minitron_table4
 #SBATCH -p palamut-cuda
 #SBATCH --gres=gpu:1

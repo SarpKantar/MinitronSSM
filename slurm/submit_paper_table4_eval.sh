@@ -1,11 +1,12 @@
 #!/bin/bash
+# Active Slurm submission wrapper; run from the repository root.
 # Submit the paper-aligned Table 4 campaign while using at most three extra GPUs.
 set -euo pipefail
 
 REPO=/arf/scratch/skantar/MinitronSSM
 cd "${REPO}"
 
-TEMPLATE="${REPO}/run_paper_table4_eval.slurm"
+TEMPLATE="${REPO}/slurm/run_paper_table4_eval.slurm"
 KD_JOB_ID=${KD_JOB_ID:-1287432}
 
 submit_eval () {
